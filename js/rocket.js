@@ -1,4 +1,4 @@
-import { CANVAS, ROCKET, COLORS, GAME_STATES } from './constants.js';
+import { CANVAS, ROCKET, COLORS } from './constants.js';
 
 class Rocket {
   constructor(effects) {
@@ -14,7 +14,6 @@ class Rocket {
     this.lit = false;
     this.dockThreshold = ROCKET.DOCK_THRESHOLD;
     this.idleSwayOffset = 0;
-    this.trail = [];
   }
 
   launch() {
@@ -25,25 +24,19 @@ class Rocket {
     this.y = ROCKET.START_Y;
     this.speed = ROCKET.INITIAL_SPEED;
     this.angle = -Math.PI / 2;
-    this.trail = [];
   }
 
-  reset() {
-    this.launch();
-  }
+  reset() { this.launch(); }
 
   dock(slot) {
     this.state = 'docked';
     this.docked = true;
-    // Smoothly animate into slot position
     this.targetX = slot.x;
     this.targetY = slot.y;
     this.targetAngle = slot.angle;
   }
 
-  lightUp() {
-    this.lit = true;
-  }
+  lightUp() { this.lit = true; }
 
   idleSway(dt) {
     this.idleSwayOffset = Math.sin(performance.now() / 1000 * 1.5) * 3;
@@ -51,7 +44,6 @@ class Rocket {
 
   update(dt, keys) {
     if (this.state === 'flying') {
-      // Speed control
       if (keys['ArrowUp']) {
         this.speed = Math.min(this.speed + ROCKET.ACCELERATION * dt, ROCKET.MAX_SPEED);
         this.effects.emitFire(this.x, this.y + this.height / 2, this.angle, this.speed);
@@ -59,19 +51,10 @@ class Rocket {
       if (keys['ArrowDown']) {
         this.speed = Math.max(this.speed - ROCKET.DECELERATION * dt, ROCKET.MIN_SPEED);
       }
-
-      // Direction control
-      if (keys['ArrowLeft']) {
-        this.angle -= ROCKET.TURN_RATE * dt;
-      }
-      if (keys['ArrowRight']) {
-        this.angle += ROCKET.TURN_RATE * dt;
-      }
-
-      // Clamp angle
+      if (keys['ArrowLeft']) this.angle -= ROCKET.TURN_RATE * dt;
+      if (keys['ArrowRight']) this.angle += ROCKET.TURN_RATE * dt;
       this.angle = Math.max(-Math.PI * 0.85, Math.min(-Math.PI * 0.15, this.angle));
 
-      // Move
       this.x += Math.cos(this.angle) * this.speed * dt;
       this.y += Math.sin(this.angle) * this.speed * dt;
 
@@ -81,12 +64,11 @@ class Rocket {
       if (this.y < -60) this.y = CANVAS.HEIGHT + 60;
       if (this.y > CANVAS.HEIGHT + 60) this.y = -60;
 
-      // Always emit slight fire trail when flying
-      if (Math.random() < 0.5) {
-        this.effects.emitFire(this.x, this.y + this.height / 2, this.angle, this.speed * 0.5);
+      // Fire trail
+      if (Math.random() < 0.6) {
+        this.effects.emitFire(this.x, this.y + this.height / 2, this.angle, this.speed * 0.4);
       }
     } else if (this.state === 'docked') {
-      // Smooth dock animation
       if (this.targetX !== undefined) {
         this.x += (this.targetX - this.x) * 5 * dt;
         this.y += (this.targetY - this.y) * 5 * dt;
@@ -97,143 +79,164 @@ class Rocket {
 
   draw(ctx, time) {
     ctx.save();
-    ctx.translate(
-      this.x + (this.state === 'idle' ? 0 : 0),
-      this.y + (this.state === 'idle' ? this.idleSwayOffset : 0)
-    );
-    ctx.rotate(this.angle + Math.PI / 2); // adjust so 0 angle = up
+    ctx.translate(this.x, this.y + (this.state === 'idle' ? this.idleSwayOffset : 0));
+    ctx.rotate(this.angle + Math.PI / 2);
 
-    // Lit glow
+    // Lit glow effect
     if (this.lit) {
       ctx.shadowColor = COLORS.LIT_GLOW;
-      ctx.shadowBlur = 20 + Math.sin(time * 3) * 5;
+      ctx.shadowBlur = 20 + Math.sin(time * 3) * 6;
     }
 
-    this._drawBody(ctx);
+    this._drawSimpleRocket(ctx, time);
     this._drawFace(ctx);
-    this._drawFins(ctx);
-    this._drawWindow(ctx);
 
     ctx.shadowColor = 'transparent';
     ctx.shadowBlur = 0;
     ctx.restore();
 
-    // Docked indicator
+    // Pulsing ring if lit and docked
     if (this.docked && this.lit) {
       ctx.save();
       ctx.translate(this.x, this.y);
-      const glowPulse = 0.4 + 0.3 * Math.sin(time * 4);
+      const ringAlpha = 0.3 + 0.2 * Math.sin(time * 4);
       ctx.beginPath();
-      ctx.arc(0, 0, 20, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 215, 0, ${glowPulse})`;
-      ctx.fill();
+      ctx.arc(0, 0, 22, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(255, 215, 0, ${ringAlpha})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
       ctx.restore();
     }
   }
 
-  _drawBody(ctx) {
-    // Main body - cute rounded rectangle
-    const bw = this.width;
-    const bh = this.height;
-    const radius = bw / 2;
+  _drawSimpleRocket(ctx, time) {
+    const w = this.width;   // 30
+    const h = this.height;  // 50
+
+    // === Main body (rounded capsule) ===
+    // Draw as a simple pill shape using two arcs + rect
+    const rx = w / 2;  // radius for rounded ends
 
     ctx.fillStyle = COLORS.ROCKET_BODY;
+
+    // Top semicircle (nose)
     ctx.beginPath();
-    ctx.moveTo(-bw / 2, bh / 2 - radius);
-    ctx.arcTo(-bw / 2, -bh / 2, bw / 2, -bh / 2, radius);
-    ctx.arcTo(bw / 2, -bh / 2, bw / 2, bh / 2, radius);
-    ctx.arcTo(bw / 2, bh / 2, -bw / 2, bh / 2, radius);
-    ctx.arcTo(-bw / 2, bh / 2, -bw / 2, -bh / 2, radius);
+    ctx.arc(0, -h / 2 + rx, rx, Math.PI, 0, false);
+    // Right edge
+    ctx.lineTo(w / 2, h / 2 - rx);
+    // Bottom semicircle
+    ctx.arc(0, h / 2 - rx, rx, 0, Math.PI, false);
+    // Left edge
+    ctx.lineTo(-w / 2, -h / 2 + rx);
     ctx.closePath();
     ctx.fill();
 
-    // Stripe
+    // === Nose cone accent ===
+    ctx.fillStyle = COLORS.ROCKET_NOSE;
+    ctx.beginPath();
+    ctx.arc(0, -h / 2 + rx, rx * 0.65, Math.PI, 0, false);
+    ctx.fill();
+
+    // === Middle stripe ===
     ctx.fillStyle = COLORS.ROCKET_FIN;
-    ctx.fillRect(-bw / 2, -5, bw, 10);
-  }
+    ctx.fillRect(-w / 2, -4, w, 8);
 
-  _drawFace(ctx) {
-    // Cute face on the body
-    const eyeY = -12;
-    const eyeSpacing = 6;
-
-    // Eyes - big and cute
-    ctx.fillStyle = COLORS.ROCKET_EYE;
-    ctx.beginPath();
-    ctx.arc(-eyeSpacing, eyeY, 5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(eyeSpacing, eyeY, 5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Pupils
-    ctx.fillStyle = COLORS.ROCKET_PUPIL;
-    ctx.beginPath();
-    ctx.arc(-eyeSpacing + 1, eyeY - 1, 2.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(eyeSpacing + 1, eyeY - 1, 2.5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Eye shine
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.arc(-eyeSpacing + 2, eyeY - 2.5, 1, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(eyeSpacing + 2, eyeY - 2.5, 1, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Happy mouth
-    ctx.strokeStyle = COLORS.ROCKET_PUPIL;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(0, eyeY + 3, 4, 0.1, Math.PI - 0.1);
-    ctx.stroke();
-
-    // Rosy cheeks
-    ctx.fillStyle = 'rgba(255, 150, 150, 0.4)';
-    ctx.beginPath();
-    ctx.ellipse(-eyeSpacing - 4, eyeY + 4, 3, 2, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(eyeSpacing + 4, eyeY + 4, 3, 2, 0, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  _drawFins(ctx) {
-    const bh = this.height;
-
-    // Left fin
-    ctx.fillStyle = COLORS.ROCKET_FIN;
-    ctx.beginPath();
-    ctx.moveTo(-this.width / 2 + 2, bh / 2 - 10);
-    ctx.lineTo(-this.width / 2 - 8, bh / 2 + 5);
-    ctx.lineTo(-this.width / 2 + 4, bh / 2 - 2);
-    ctx.closePath();
-    ctx.fill();
-
-    // Right fin
-    ctx.beginPath();
-    ctx.moveTo(this.width / 2 - 2, bh / 2 - 10);
-    ctx.lineTo(this.width / 2 + 8, bh / 2 + 5);
-    ctx.lineTo(this.width / 2 - 4, bh / 2 - 2);
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  _drawWindow(ctx) {
-    // Round window
-    const wy = -20;
+    // === Window (porthole) ===
+    const wy = -15;
     ctx.fillStyle = COLORS.ROCKET_WINDOW;
     ctx.beginPath();
     ctx.arc(0, wy, 7, 0, Math.PI * 2);
     ctx.fill();
 
-    // Window shine
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    // Window reflection
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
     ctx.beginPath();
     ctx.arc(-2, wy - 2, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // === Fins ===
+    // Left fin
+    ctx.fillStyle = COLORS.ROCKET_FIN;
+    ctx.beginPath();
+    ctx.moveTo(-w / 2 + 1, h / 2 - 12);
+    ctx.lineTo(-w / 2 - 10, h / 2 + 6);
+    ctx.lineTo(-w / 2 + 5, h / 2 - 3);
+    ctx.closePath();
+    ctx.fill();
+
+    // Right fin
+    ctx.beginPath();
+    ctx.moveTo(w / 2 - 1, h / 2 - 12);
+    ctx.lineTo(w / 2 + 10, h / 2 + 6);
+    ctx.lineTo(w / 2 - 5, h / 2 - 3);
+    ctx.closePath();
+    ctx.fill();
+
+    // === Engine nozzle at bottom ===
+    ctx.fillStyle = '#555';
+    ctx.beginPath();
+    ctx.moveTo(-5, h / 2 - rx + 2);
+    ctx.lineTo(-8, h / 2 + 4);
+    ctx.lineTo(8, h / 2 + 4);
+    ctx.lineTo(5, h / 2 - rx + 2);
+    ctx.closePath();
+    ctx.fill();
+
+    // Engine glow (pulsing)
+    if (this.state === 'flying') {
+      const glowAlpha = 0.6 + 0.3 * Math.sin(time * 15);
+      ctx.fillStyle = `rgba(255, 200, 50, ${glowAlpha})`;
+      ctx.beginPath();
+      ctx.arc(0, h / 2 + 5, 5 + Math.random() * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  _drawFace(ctx) {
+    const eyeY = -8;
+    const eyeSpacing = 5;
+
+    // White of eyes
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.arc(-eyeSpacing, eyeY, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(eyeSpacing, eyeY, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Pupils
+    ctx.fillStyle = '#2C3E50';
+    ctx.beginPath();
+    ctx.arc(-eyeSpacing + 1, eyeY - 1, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(eyeSpacing + 1, eyeY - 1, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Eye shine
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.arc(-eyeSpacing + 2, eyeY - 2, 0.8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(eyeSpacing + 2, eyeY - 2, 0.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Happy mouth
+    ctx.strokeStyle = '#2C3E50';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(0, eyeY + 4, 3.5, 0.15, Math.PI - 0.15);
+    ctx.stroke();
+
+    // Rosy cheeks
+    ctx.fillStyle = 'rgba(255, 140, 140, 0.4)';
+    ctx.beginPath();
+    ctx.ellipse(-eyeSpacing - 4, eyeY + 3, 3, 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(eyeSpacing + 4, eyeY + 3, 3, 2, 0, 0, Math.PI * 2);
     ctx.fill();
   }
 }
