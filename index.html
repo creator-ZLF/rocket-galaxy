@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🚀 火箭穿梭银河 — Rocket Galaxy</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<canvas id="gameCanvas"></canvas>
+
+<!-- UI Overlays -->
+<div id="uiOverlay">
+
+  <!-- Start Screen -->
+  <div id="startOverlay" class="overlay visible">
+    <div class="overlay-content">
+      <h1 id="startTitle">🚀 火箭穿梭银河</h1>
+      <p id="startDesc" class="subtitle">帮助火箭进入旋转的星际轨道<br>发现最热门的AI项目</p>
+      <p class="hint-text">按 <kbd>SPACE</kbd> 发射</p>
+    </div>
+  </div>
+
+  <!-- Success Card -->
+  <div id="successCard" class="modal-card">
+    <div class="card-inner">
+      <h3>🎯 对接成功！</h3>
+      <div id="projectInfo">
+        <h4 id="projectName"></h4>
+        <p id="projectDesc"></p>
+        <span id="projectStars"></span>
+      </div>
+      <a id="projectLink" href="#" target="_blank" class="btn-link">🔗 查看项目 →</a>
+      <button id="btnCollect" class="btn-primary" onclick="document.dispatchEvent(new Event('collect'))">🌟 收集此项目</button>
+      <p id="collectHint" class="hint-text" style="display:none">点击上方按钮收集，或继续下一个</p>
+    </div>
+  </div>
+
+  <!-- Galaxy Complete -->
+  <div id="galaxyCompleteOverlay" class="overlay">
+    <div class="overlay-content">
+      <h2>🌟 星系完成！</h2>
+      <h3 id="completeGalaxyName"></h3>
+      <p id="completeDesc"></p>
+      <p class="hint-text">自然选择号 即将启程...</p>
+      <p class="hint-text">按 <kbd>SPACE</kbd> 前往下一个星系</p>
+    </div>
+  </div>
+
+  <!-- Transition -->
+  <div id="transitionOverlay" class="overlay">
+    <div class="overlay-content">
+      <h2 id="transitionTitle"></h2>
+      <p id="transitionSub"></p>
+    </div>
+  </div>
+
+  <!-- Collection Counter -->
+  <div id="collectionCounter" class="hud-widget">
+    <span class="counter-label">收集进度</span>
+    <div class="rocket-icons">
+      <span class="rocket-icon">⚪</span>
+      <span class="rocket-icon">⚪</span>
+      <span class="rocket-icon">⚪</span>
+      <span class="rocket-icon">⚪</span>
+      <span class="rocket-icon">⚪</span>
+      <span class="rocket-icon">⚪</span>
+      <span class="rocket-icon">⚪</span>
+      <span class="rocket-icon">⚪</span>
+      <span class="rocket-icon">⚪</span>
+    </div>
+  </div>
+
+  <!-- Touch Controls (mobile) -->
+  <div id="touchControls" class="touch-controls" style="display:none">
+    <div class="dpad">
+      <button id="btnUp" class="touch-btn">▲</button>
+      <button id="btnLeft" class="touch-btn">◀</button>
+      <button id="btnRight" class="touch-btn">▶</button>
+      <button id="btnDown" class="touch-btn">▼</button>
+    </div>
+    <button id="btnLaunch" class="touch-btn touch-launch">LAUNCH</button>
+    <button id="btnCollectTouch" class="touch-btn touch-collect">COLLECT</button>
+  </div>
+
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
