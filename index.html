@@ -31,9 +31,11 @@ canvas{display:block;position:fixed;top:0;left:0}
 .toast .t-stars{font-size:0.7rem;color:#888}
 .toast .t-link{display:inline-block;margin-top:8px;padding:5px 12px;background:rgba(255,255,255,0.08);color:#ccc;text-decoration:none;border-radius:6px;font-size:0.75rem;border:1px solid rgba(255,255,255,0.15);pointer-events:auto}
 .toast .t-link:hover{background:rgba(255,255,255,0.15);color:#fff}
-.toast .t-planet{font-size:0.78rem;color:#aaa;margin-top:6px;line-height:1.3}
-.toast .t-sparkle{display:inline-block;margin-top:6px;font-size:1.2rem;animation:sparkle 0.6s ease-out}
-@keyframes sparkle{0%{transform:scale(0.5);opacity:0}50%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:0.8}}
+.toast .t-planet-header{font-size:0.85rem;color:#ddd;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);font-weight:bold}
+.toast .t-planet-info{font-size:0.73rem;color:#aaa;margin-top:6px;line-height:1.5;text-align:left;max-height:180px;overflow-y:auto;padding-right:4px}
+.toast .t-planet-visual{font-size:0.7rem;color:#999;margin-top:10px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;line-height:1.6;text-align:left;font-family:monospace}
+.toast .t-planet-visual .stat{display:flex;justify-content:space-between;margin:2px 0}
+.toast .t-planet-visual .stat .val{color:#ddd}
 
 .hud{position:absolute;top:16px;left:20px;pointer-events:none;z-index:5}
 .hud .sysname{font-size:0.78rem;color:rgba(255,255,255,0.45);letter-spacing:2px;margin-bottom:4px}
@@ -66,12 +68,9 @@ canvas{display:block;position:fixed;top:0;left:0}
     <div class="toast-card">
       <div class="t-quote" id="tQuote"></div>
       <div class="t-author" id="tAuthor"></div>
-      <div class="t-project" id="tProject"></div>
-      <div class="t-desc" id="tDesc"></div>
-      <div class="t-stars" id="tStars"></div>
-      <a class="t-link" id="tLink" href="#" target="_blank"></a>
-      <div class="t-planet" id="tPlanet"></div>
-      <div class="t-sparkle" id="tSparkle">✨</div>
+      <div class="t-planet-header" id="tPlanetHeader"></div>
+      <div class="t-planet-info" id="tPlanetInfo"></div>
+      <div class="t-planet-visual" id="tPlanetVisual"></div>
     </div>
   </div>
 
@@ -165,13 +164,13 @@ const AI_QUOTES = [
 
 // ─── Planet color by temperature ───
 function planetColors(temp) {
-  // Unlit = dark gray/black, lit = warm glow based on temperature
+  // Unlit = dark gray, lit = vivid temperature-based colors
   switch (temp) {
-    case 'hot':  return { body:'#3a3a3a', glow:'#ff5533', name:'红热行星', bright:'#ffccbb', litBody:'#ff6644' };
-    case 'warm': return { body:'#3a3a3a', glow:'#ff9922', name:'温暖行星', bright:'#ffdd99', litBody:'#ffaa33' };
-    case 'cool': return { body:'#3a3a3a', glow:'#4499ee', name:'凉爽行星', bright:'#bbddff', litBody:'#66bbff' };
-    case 'cold': return { body:'#3a3a3a', glow:'#3366ee', name:'冰冷行星', bright:'#99bbff', litBody:'#4488ff' };
-    default:     return { body:'#3a3a3a', glow:'#999', name:'未知', bright:'#ddd', litBody:'#aaa' };
+    case 'hot':  return { body:'#3a3a3a', glow:'#ff4422', litBody:'#ff5533', name:'🔥 红热行星', info:'表面温度极高，炽热的岩石世界' };
+    case 'warm': return { body:'#3a3a3a', glow:'#ff8800', litBody:'#ff9933', name:'🌤 温暖行星', info:'温度适中，可能适宜生命存在' };
+    case 'cool': return { body:'#3a3a3a', glow:'#3399ee', litBody:'#55aaff', name:'❄ 凉爽行星', info:'表面较冷，大气层较厚的气态或冰质行星' };
+    case 'cold': return { body:'#3a3a3a', glow:'#2266ee', litBody:'#4488ff', name:'🧊 冰冷行星', info:'表面极寒，遥远的冰冻世界' };
+    default:     return { body:'#3a3a3a', glow:'#999', litBody:'#bbb', name:'未知', info:'' };
   }
 }
 
@@ -356,23 +355,7 @@ function resumeAfterDock() {
     showComplete();
     return;
   }
-  // Show planet detail card then resume
-  const planet = planets[targetPlanetIdx];
-  const card = document.getElementById('tPlanet');
-  if (card.textContent === '') {
-    // First press: show planet detail
-    card.textContent = '🪐 ' + planet.name + '\n\n' + planet.info;
-    card.style.fontSize = '0.75rem';
-    card.style.color = '#ccc';
-    card.style.lineHeight = '1.5';
-    card.style.marginTop = '10px';
-    card.style.textAlign = 'left';
-    card.style.maxHeight = '200px';
-    card.style.overflowY = 'auto';
-    card.style.whiteSpace = 'pre-wrap';
-    return; // wait for next arrow press
-  }
-  // Second press: resume flying
+  // One press: dismiss card and resume flying
   state = S.PLAY;
   rocket.speed = 80;
   rocket.angle = -Math.PI / 2;
@@ -391,7 +374,7 @@ function nextQuote() {
   return q;
 }
 
-// ─── Dock = immediate light up ───
+// ─── Dock = light up + show unified card ───
 function dock() {
   const planet = planets[targetPlanetIdx];
   const pos = getPlanetPos(targetPlanetIdx);
@@ -402,17 +385,29 @@ function dock() {
   collected.push(targetPlanetIdx);
   dockCooldown = 1.5;
 
-  // Get quote
+  // Quote
   const quote = nextQuote();
   document.getElementById('tQuote').textContent = quote.text;
   document.getElementById('tAuthor').textContent = '— ' + quote.author;
-  document.getElementById('tProject').textContent = '';
-  document.getElementById('tDesc').textContent = '';
-  document.getElementById('tStars').textContent = '';
-  document.getElementById('tLink').textContent = '';
-  document.getElementById('tLink').style.display = 'none';
-  // Detailed planet card
-  document.getElementById('tPlanet').textContent = '';
+
+  // Planet header
+  document.getElementById('tPlanetHeader').textContent = planet.emoji + ' ' + planet.name + ' · ' + colors.name;
+
+  // Planet detail info
+  document.getElementById('tPlanetInfo').textContent = planet.info;
+
+  // Visual stats card
+  const orbitDays = (planet.period * 365).toFixed(0);
+  const distAU = planet.dist.toFixed(2);
+  const tempLabel = planet.temp === 'hot' ? '>400°C' : planet.temp === 'warm' ? '-50~50°C' : planet.temp === 'cool' ? '-100~-30°C' : '<-150°C';
+  const typeLabel = planet.temp === 'hot' || planet.temp === 'warm' ? '岩石行星' : '气态/冰质行星';
+  document.getElementById('tPlanetVisual').innerHTML = `
+    <div class="stat"><span>🌡 表面温度</span><span class="val">${tempLabel}</span></div>
+    <div class="stat"><span>📏 距恒星</span><span class="val">${distAU} AU</span></div>
+    <div class="stat"><span>🔄 公转周期</span><span class="val">${orbitDays} 天</span></div>
+    <div class="stat"><span>🪨 类型</span><span class="val">${typeLabel}</span></div>
+    <div class="stat"><span>⭐ 状态</span><span class="val">已点亮 ✨</span></div>
+  `;
 
   toast.classList.add('show');
   state = S.DOCK;
@@ -424,7 +419,7 @@ function dock() {
 
   updateHUD();
 
-  // Particles
+  // Spark particles
   for (let i = 0; i < 35; i++) {
     const a = (i / 35) * Math.PI * 2;
     particles.push({
@@ -594,9 +589,7 @@ function draw() {
     ctx.fillStyle = `rgba(200,200,200,${0.35+pulse*0.25})`;
     ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'center';
-    const planet = planets[targetPlanetIdx];
-    const card = document.getElementById('tPlanet');
-    ctx.fillText(card.textContent === '' ? '按方向键查看行星介绍' : '按方向键继续飞行', W/2, H-18);
+    ctx.fillText('按方向键继续飞行', W/2, H-18);
   }
 
   if (state === S.WARP) drawWarp();
