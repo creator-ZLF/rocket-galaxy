@@ -100,36 +100,36 @@ const SOLAR_SYSTEMS = [
   {
     name: '太阳系', emoji: '☀️', desc: '我们的家园 · 1颗恒星 · 8颗行星',
     planets: [
-      { name:'水星', emoji:'☿', dist:0.39, period:0.24, size:4, temp:'hot', info:'太阳系最小的行星，表面温度可达430°C。没有大气层，昼夜温差极大。' },
-      { name:'金星', emoji:'♀', dist:0.72, period:0.62, size:7, temp:'hot', info:'最亮的行星，被浓厚二氧化碳大气包裹。表面温度约465°C，是太阳系最热的行星。' },
-      { name:'地球', emoji:'🌍', dist:1.00, period:1.00, size:7, temp:'warm', info:'我们的家园，目前已知唯一存在生命的天体。拥有液态水和含氧大气层。' },
-      { name:'火星', emoji:'♂', dist:1.52, period:1.88, size:5, temp:'warm', info:'红色星球，拥有太阳系最高的火山——奥林帕斯山。可能存在过液态水。' },
-      { name:'木星', emoji:'♃', dist:2.50, period:4.50, size:15, temp:'cool', info:'太阳系最大的行星，大红斑风暴已持续超过350年。拥有95颗已知卫星。' },
-      { name:'土星', emoji:'♄', dist:3.20, period:7.00, size:13, temp:'cool', info:'以其壮观的环系统闻名，主要由冰粒和岩石碎片组成。密度低于水。' },
-      { name:'天王星', emoji:'⛢', dist:4.00, period:12.0, size:9, temp:'cold', info:'侧躺旋转的冰巨星，自转轴倾斜约98°。大气含甲烷使其呈现蓝绿色。' },
-      { name:'海王星', emoji:'♆', dist:4.50, period:16.0, size:9, temp:'cold', info:'太阳系最远的行星，风速可达2100km/h。1846年通过数学预测发现。' },
+      { name:'水星', emoji:'☿', dist:0.39, period:0.24, size:5, info:'水星是太阳系中最小的行星，也是距离太阳最近的行星。它的表面布满了撞击坑，看起来很像月球。由于没有大气层保护，水星表面昼夜温差极为剧烈——白天可达430°C，夜晚则骤降至-180°C。水星绕太阳一周仅需88天，但自转一周却需要59天。有趣的是，水星每自转三圈恰好绕太阳两圈，形成了一种独特的3:2轨道共振。NASA的信使号探测器曾绕水星飞行四年，发现水星极地陨石坑深处可能存在水冰。' },
+      { name:'金星', emoji:'♀', dist:0.72, period:0.62, size:7, info:'金星是太阳系中最亮的行星，被称为"启明星"或"长庚星"。它的大小和质量与地球相近，常被称为地球的"姐妹行星"。金星被一层厚厚的二氧化碳大气包裹，表面大气压是地球的92倍，相当于地球海洋深处900米的压力。浓厚的温室效应使金星表面温度高达465°C——比最靠近太阳的水星还热。金星的自转方向与大多数行星相反（逆行自转），也就是说在金星上太阳从西边升起。前苏联的金星探测器曾成功着陆并传回了金星表面的图像，但只坚持了不到两小时就被高温和高压摧毁。' },
+      { name:'地球', emoji:'🌍', dist:1.00, period:1.00, size:7, info:'地球是太阳系中目前已知唯一孕育了生命的天体，也是人类在浩瀚宇宙中的唯一家园。它拥有液态水的海洋、富含氧的大气层、以及适中的温度——这一切得益于它恰好位于太阳系的"宜居带"内。地球的磁场保护我们免受太阳风的侵袭，月球稳定了地球的自转轴倾角，使气候保持相对稳定。从太空中看，地球是一颗美丽的蓝色弹珠，覆盖着白色的云层和绿色的大陆。卡尔·萨根曾说："再看看那个点吧。那是这里，那是家园，那是我们。在这颗小小尘埃上，你所爱的每一个人，你所认识的每一个人，都度过了一生。"' },
+      { name:'火星', emoji:'♂', dist:1.52, period:1.88, size:5, info:'火星因其红色的外表而被称为"红色星球"，这种红色来自表面丰富的氧化铁（铁锈）。火星拥有太阳系最高的山——奥林帕斯山高达21.9公里，几乎三倍于珠穆朗玛峰。水手号峡谷长达4000公里，几乎可以横跨整个美国。大量证据表明，数十亿年前的火星表面有液态水流动，甚至可能存在过海洋。如今，多个探测器正在火星表面工作，寻找过去或现在生命存在的迹象。埃隆·马斯克的SpaceX公司计划在本世纪内将人类送上火星，建立永久性定居点。火星是人类成为多行星物种的第一站。' },
+      { name:'木星', emoji:'♃', dist:2.50, period:4.50, size:15, info:'木星是太阳系中最大的行星，它如此巨大，以至于其质量超过了所有其他行星质量总和的2.5倍。木星的大红斑是一个持续了超过350年的超级风暴，其直径比整个地球还大。这颗气态巨星没有固体表面，主要由氢和氦组成，内部压力极大，甚至可能将氢压缩成金属态。木星拥有95颗已知卫星，其中最大的四颗——木卫一、木卫二、木卫三和木卫四——由伽利略于1610年发现。木卫二冰冷的表面下被认为存在一个全球性的液态海洋，是太阳系中寻找外星生命最有希望的地点之一。' },
+      { name:'土星', emoji:'♄', dist:3.20, period:7.00, size:13, info:'土星以其壮观的环系统而闻名，这些环主要由数十亿个冰粒和岩石碎片组成，从微小的尘埃到房屋大小的巨石不等。尽管环系统直径达到28万公里，但其厚度通常不到10米——在比例上比一张纸还薄。土星是太阳系中密度最低的行星，其平均密度只有0.69g/cm³，理论上可以浮在水面上（如果有足够大的水池）。土星最大的卫星土卫六（Titan）是太阳系中唯一拥有稠密大气层的卫星，表面存在液态甲烷湖泊和河流。卡西尼号探测器在土星轨道工作了13年，最后以壮丽的方式坠入土星大气层，结束了它20年的使命。' },
+      { name:'天王星', emoji:'⛢', dist:4.00, period:12.0, size:9, info:'天王星是太阳系中最神秘的行星之一。它的自转轴几乎完全倒向一侧——倾斜了约98度——像一颗"滚着走"的行星。这意味着天王星的极地可以直接面对太阳，导致极端的季节变化：每个极点会经历42年的持续日照，接着是42年的完全黑暗。天王星的蓝绿色来自大气中的甲烷吸收了红光。天王星的环系统非常暗淡，直到1977年才被发现。它拥有27颗已知卫星，这些卫星多以莎士比亚戏剧中的人物命名。天王星和它的邻居海王星被统称为"冰巨星"，因为它们含有比木星和土星更多的水、氨和甲烷冰。' },
+      { name:'海王星', emoji:'♆', dist:4.50, period:16.0, size:9, info:'海王星是太阳系最远的行星，也是唯一通过数学预测而非直接观测发现的行星。1846年，天文学家注意到天王星的轨道存在异常，推测可能有一颗未知行星的引力在影响它。法国数学家勒维耶通过计算预测了这颗行星的位置，柏林天文台的加勒当晚就在预测位置附近找到了它——这是牛顿力学最伟大的胜利之一。海王星拥有太阳系中最强的风，风速可高达每小时2100公里。它最大的卫星海卫一（Triton）是一颗冰冻的世界，表面有活跃的冰火山喷发出氮气。海王星绕太阳一周需要165年——从发现至今，它只完成了一圈公转。' },
     ]
   },
   {
     name: '比邻星系', emoji: '⭐', desc: '距地球4.2光年 · 三星系统',
     planets: [
-      { name:'比邻b', emoji:'🪐', dist:0.35, period:0.30, size:5, temp:'warm', info:'位于宜居带的类地行星，质量约1.2倍地球。可能存在液态水。' },
-      { name:'比邻c', emoji:'🪐', dist:0.65, period:0.70, size:6, temp:'cool', info:'超级地球，质量约7倍地球。轨道周期约5.2年。' },
-      { name:'比邻d', emoji:'🪐', dist:0.95, period:1.20, size:4, temp:'cool', info:'2022年确认的小质量行星，仅约0.26倍地球质量。' },
-      { name:'Prox e', emoji:'🪐', dist:1.50, period:2.20, size:8, temp:'cold', info:'理论预测的气态行星，拥有稀疏的环系统。' },
-      { name:'Prox f', emoji:'🪐', dist:2.20, period:4.00, size:11, temp:'cold', info:'冰巨星，大气富含氢和氦，可能有多个冰卫星。' },
+      { name:'比邻b', emoji:'🪐', dist:0.35, period:0.30, size:5, info:'比邻星b是一颗位于比邻星宜居带内的类地行星，质量约为地球的1.2倍。它距离我们仅4.2光年，是已知距离地球最近的系外行星。比邻星b绕其主星运行一周仅需11.2天，但由于比邻星是一颗红矮星，辐射出的能量远小于太阳，因此比邻星b的表面温度可能刚好适合液态水的存在。不过，红矮星频繁的耀斑活动可能已经剥离了行星的大气层，这使得它的宜居性仍然存在争议。如果人类有朝一日能够向其他恒星系统发射探测器，比邻星b无疑将是首选目标。' },
+      { name:'比邻c', emoji:'🪐', dist:0.65, period:0.70, size:6, info:'比邻星c是一颗超级地球，质量约为地球的7倍，在距离比邻星约1.5天文单位的轨道上运行。这颗行星于2019年通过径向速度法发现，其轨道周期约为5.2年。由于距离主星较远，其表面温度极低，可能被冰层覆盖。比邻星c的发现表明，即使是距离我们最近的恒星系统，也可能拥有一个复杂的多行星架构。它的存在挑战了我们对红矮星周围行星形成的理论模型。' },
+      { name:'比邻d', emoji:'🪐', dist:0.95, period:1.20, size:4, info:'比邻星d是一颗于2022年新确认的系外行星，质量仅为地球的0.26倍，是已知质量最小的系外行星之一。它非常靠近比邻星，轨道周期仅约5天。如此小的质量意味着它几乎肯定是一颗岩石行星，表面可能被熔岩覆盖。比邻星d的发现使用了欧洲南方天文台的甚大望远镜，标志着径向速度测量技术已经精确到了足以探测亚地球质量行星的程度。' },
+      { name:'Prox e', emoji:'🪐', dist:1.50, period:2.20, size:8, info:'比邻星e是一颗理论预测的气态行星，质量约为地球的15倍，大致相当于海王星的质量。它可能拥有一个由冰粒和岩石碎片组成的稀疏环系统。由于距离主星较远，它的温度极低，大气中可能含有大量的氢和氦。比邻星e的存在尚未得到完全确认，但多个独立的天文学团队都发现了支持它存在的证据。如果被证实，它将是比邻星系中第四颗被确认的行星。' },
+      { name:'Prox f', emoji:'🪐', dist:2.20, period:4.00, size:11, info:'比邻星f是该系统最外层的理论行星，可能是一颗冰巨星，类似于太阳系中的天王星和海王星。它的质量约为地球的25倍，大气中富含氢和氦。由于距离比邻星非常远，表面温度可能接近绝对零度。如果这颗行星确实存在，它可能拥有多个冰卫星，其中一些卫星的内部可能存在液态水海洋。这颗行星的发现将进一步证明，即使是距离我们最近的恒星系统，也可能拥有丰富多样的行星家族。' },
     ]
   },
   {
     name: 'TRAPPIST-1', emoji: '💫', desc: '7颗类地行星 · 距地球40光年',
     planets: [
-      { name:'TRAPPIST-1b', emoji:'🪐', dist:0.25, period:0.25, size:5, temp:'hot', info:'最内层的岩石行星，被潮汐锁定。表面温度极高。' },
-      { name:'TRAPPIST-1c', emoji:'🪐', dist:0.40, period:0.50, size:5, temp:'hot', info:'密度与地球相似，可能有稠密的二氧化碳大气。' },
-      { name:'TRAPPIST-1d', emoji:'🪐', dist:0.55, period:0.75, size:5, temp:'warm', info:'系统中质量最小的行星，约0.3倍地球质量。' },
-      { name:'TRAPPIST-1e', emoji:'🌍', dist:0.70, period:1.00, size:6, temp:'warm', info:'最像地球的行星！位于宜居带中央，最有可能存在液态水。' },
-      { name:'TRAPPIST-1f', emoji:'🪐', dist:0.90, period:1.50, size:6, temp:'cool', info:'宜居带边缘的水世界，表面可能被海洋覆盖。' },
-      { name:'TRAPPIST-1g', emoji:'🪐', dist:1.10, period:2.00, size:7, temp:'cool', info:'系统中最大的行星，可能有厚大气层。' },
-      { name:'TRAPPIST-1h', emoji:'🪐', dist:1.40, period:3.00, size:4, temp:'cold', info:'最外层的冰冻世界，表面温度极低。' },
+      { name:'TRAPPIST-1b', emoji:'🪐', dist:0.25, period:0.25, size:5, info:'TRAPPIST-1b是该系统最内层的岩石行星，被潮汐锁定——总是一面永远朝向它的恒星。这种锁定意味着它的一面是永恒的炽热白昼，另一面则是永夜。虽然其密度与地球相近，但其表面温度极高，不太可能适宜生命存在。科学家通过韦伯太空望远镜的观测发现，这颗行星很可能没有大气层，表面类似于水星——只是一个裸露的岩石球体。' },
+      { name:'TRAPPIST-1c', emoji:'🪐', dist:0.40, period:0.50, size:5, info:'TRAPPIST-1c的密度与地球非常相似，这暗示它可能拥有类似的岩石组成。科学家曾猜测它可能有一个稠密的二氧化碳大气层，但韦伯望远镜的最新观测表明它可能也是裸露的岩石行星。即使没有大气层，它的存在仍然具有重大意义——它证明了小型红矮星周围可以形成与地球密度相似的岩石行星，这对于寻找类地行星来说是一个重要的发现。' },
+      { name:'TRAPPIST-1d', emoji:'🪐', dist:0.55, period:0.75, size:5, info:'TRAPPIST-1d是系统中质量最小的行星，仅为地球的0.3倍——大约相当于火星的质量。它是如何形成的仍然是一个未解之谜。由于引力较弱，它可能没办法保持浓厚的大气层。但它的存在本身就令人着迷：在距离我们仅40光年的地方，一个微小的岩石世界正在静静地绕着它的暗红色太阳运行。' },
+      { name:'TRAPPIST-1e', emoji:'🌍', dist:0.70, period:1.00, size:6, info:'TRAPPIST-1e是整个系统中与地球最为相似的行星。它位于恒星的宜居带正中央，质量、大小和密度都与地球非常接近。科学家认为它是该系统中最有可能存在液态水——乃至生命——的地方。它接收到的恒星能量与地球从太阳接收的能量相当。韦伯望远镜的科学家们正在密切观测这颗行星，试图分析它的大气成分，寻找水蒸气、氧气和甲烷等可能的生命信号。如果人类要选择第一颗拍摄到大气光谱的宜居带类地行星，TRAPPIST-1e很可能就是答案。' },
+      { name:'TRAPPIST-1f', emoji:'🪐', dist:0.90, period:1.50, size:6, info:'TRAPPIST-1f位于宜居带的边缘，是一个潜在的水世界。科学家推测这颗行星可能拥有一个全球性的液态水海洋，其水量可能是地球海洋的数倍。由于距离恒星稍远，其表面温度可能比地球低，但如果存在温室效应适中的大气层，它仍可能维持液态水。如果能够确认它是一个水世界，那将是人类首次发现这样的行星——一个完全由海洋覆盖的星球，没有陆地，只有无尽的水。' },
+      { name:'TRAPPIST-1g', emoji:'🪐', dist:1.10, period:2.00, size:7, info:'TRAPPIST-1g是系统中最大的行星，质量约为地球的1.15倍。它位于宜居带的外边界附近，可能拥有一层较厚的大气层来保持表面温暖。如果它有足够的温室气体，表面温度可能允许液态水的存在。它与相邻行星之间有复杂的引力相互作用——这七颗行星的轨道周期形成了近乎精确的共振链，它们的引力相互影响，使系统保持了惊人的稳定。' },
+      { name:'TRAPPIST-1h', emoji:'🪐', dist:1.40, period:3.00, size:4, info:'TRAPPIST-1h是该系统最外层的行星，位于宜居带之外，是一个冰冻的世界。它的表面可能被冰层和冻结的二氧化碳覆盖，温度可能低至-100°C以下。尽管如此，如果它内部存在放射性元素衰变产生的热量，其冰层之下可能存在液态水。TRAPPIST-1h是这个非凡系统的边界标志——一个由七颗类地行星组成的、距离我们仅40光年的微型太阳系。它提示我们，宇宙中可能遍布着这样的行星系统。' },
     ]
   }
 ];
@@ -137,30 +137,41 @@ const SOLAR_SYSTEMS = [
 // ─── AI Quotes ───
 const AI_QUOTES = [
   { text:'"The development of full artificial intelligence could spell the end of the human race."', author:'Stephen Hawking' },
-  { text:'"AI is the new electricity. Just as electricity transformed industry after industry 100 years ago, AI will do the same."', author:'Andrew Ng' },
-  { text:'"The question is not whether intelligent machines can have emotions, but whether machines can be intelligent without emotions."', author:'Marvin Minsky' },
-  { text:'"By far, the greatest danger of Artificial Intelligence is that people conclude too early that they understand it."', author:'Eliezer Yudkowsky' },
+  { text:'"AI is the new electricity. Just as electricity transformed industry 100 years ago, AI will do the same."', author:'Andrew Ng' },
   { text:'"Machine intelligence is the last invention that humanity will ever need to make."', author:'Nick Bostrom' },
-  { text:'"The pace of progress in artificial intelligence is incredibly fast. Unless you have direct exposure, you have no idea how fast."', author:'Elon Musk' },
-  { text:'"AI will reach human levels by around 2029. By 2045, we will have multiplied the intelligence of our civilization a billion-fold."', author:'Ray Kurzweil' },
-  { text:'"The best way to predict the future is to invent it — and AI is how we invent it now."', author:'Alan Kay (adapted)' },
-  { text:'"Some people call this artificial intelligence, but the reality is this technology will enhance us."', author:'Ginni Rometty' },
-  { text:'"AI doesn\'t have to be evil to destroy humanity — if AI has a goal and humanity happens to be in the way."', author:'Elon Musk' },
-  { text:'"A year spent in artificial intelligence is enough to make one believe in God."', author:'Alan Perlis' },
-  { text:'"I visualize a time when we will be to robots what dogs are to humans, and I\'m rooting for the machines."', author:'Claude Shannon' },
-  { text:'"We are stuck with technology when what we really want is just stuff that works."', author:'Douglas Adams' },
-  { text:'"It is through science that we prove, but through intuition that we discover."', author:'Henri Poincaré' },
+  { text:'"The cosmos is within us. We are made of star-stuff. We are a way for the universe to know itself."', author:'Carl Sagan' },
+  { text:'"Look up at the stars and not down at your feet. Try to make sense of what you see, and wonder about what makes the universe exist."', author:'Stephen Hawking' },
+  { text:'"We are just an advanced breed of monkeys on a minor planet of a very average star. But we can understand the Universe. That makes us something very special."', author:'Stephen Hawking' },
+  { text:'"Two things are infinite: the universe and human stupidity; and I\'m not sure about the universe."', author:'Albert Einstein' },
   { text:'"The important thing is not to stop questioning. Curiosity has its own reason for existing."', author:'Albert Einstein' },
+  { text:'"Somewhere, something incredible is waiting to be known."', author:'Carl Sagan' },
+  { text:'"The universe is under no obligation to make sense to you."', author:'Neil deGrasse Tyson' },
+  { text:'"Every one of us is, in the cosmic perspective, precious. If a human disagrees with you, let him live. In a hundred billion galaxies, you will not find another."', author:'Carl Sagan' },
+  { text:'"We are the cosmos made conscious and life is the means by which the universe understands itself."', author:'Brian Cox' },
+  { text:'"AI doesn\'t have to be evil to destroy humanity — if AI has a goal and humanity happens to be in the way."', author:'Elon Musk' },
+  { text:'"The best way to predict the future is to invent it — and AI is how we invent it now."', author:'Alan Kay' },
+  { text:'"By far, the greatest danger of Artificial Intelligence is that people conclude too early that they understand it."', author:'Eliezer Yudkowsky' },
+  { text:'"We are stuck with technology when what we really want is just stuff that works."', author:'Douglas Adams' },
+  { text:'"I visualize a time when we will be to robots what dogs are to humans, and I\'m rooting for the machines."', author:'Claude Shannon' },
+  { text:'"It is through science that we prove, but through intuition that we discover."', author:'Henri Poincaré' },
+  { text:'"AI will reach human levels by around 2029. By 2045, we will have multiplied intelligence a billion-fold."', author:'Ray Kurzweil' },
+  { text:'"A year spent in artificial intelligence is enough to make one believe in God."', author:'Alan Perlis' },
+  { text:'"In the long run, the greatest danger we face is not the machines becoming more human, but humans becoming more like machines."', author:'Arthur C. Clarke' },
+  { text:'"The question is not whether intelligent machines can have emotions, but whether machines can be intelligent without emotions."', author:'Marvin Minsky' },
+  { text:'"We are all connected; To each other, biologically. To the earth, chemically. To the rest of the universe, atomically."', author:'Neil deGrasse Tyson' },
+  { text:'"Our posturings, our imagined self-importance, the delusion that we have some privileged position in the Universe, are challenged by this point of pale light."', author:'Carl Sagan (Pale Blue Dot)' },
+  { text:'"The universe is a pretty big place. If it\'s just us, seems like an awful waste of space."', author:'Carl Sagan' },
 ];
 
 // ─── Planet color by temperature ───
 function planetColors(temp) {
+  // Unlit = dark gray/black, lit = warm glow based on temperature
   switch (temp) {
-    case 'hot':  return { body:'#ff9988', glow:'#ff5533', name:'红热行星', bright:'#ffccbb' };
-    case 'warm': return { body:'#ffcc66', glow:'#ff9922', name:'温暖行星', bright:'#ffdd99' };
-    case 'cool': return { body:'#88ccff', glow:'#4499ee', name:'凉爽行星', bright:'#bbddff' };
-    case 'cold': return { body:'#6699ff', glow:'#3366ee', name:'冰冷行星', bright:'#99bbff' };
-    default:     return { body:'#bbb', glow:'#999', name:'未知', bright:'#ddd' };
+    case 'hot':  return { body:'#3a3a3a', glow:'#ff5533', name:'红热行星', bright:'#ffccbb', litBody:'#ff6644' };
+    case 'warm': return { body:'#3a3a3a', glow:'#ff9922', name:'温暖行星', bright:'#ffdd99', litBody:'#ffaa33' };
+    case 'cool': return { body:'#3a3a3a', glow:'#4499ee', name:'凉爽行星', bright:'#bbddff', litBody:'#66bbff' };
+    case 'cold': return { body:'#3a3a3a', glow:'#3366ee', name:'冰冷行星', bright:'#99bbff', litBody:'#4488ff' };
+    default:     return { body:'#3a3a3a', glow:'#999', name:'未知', bright:'#ddd', litBody:'#aaa' };
   }
 }
 
@@ -177,13 +188,10 @@ let targetPlanetIdx = 0;
 let particles = [];
 let bgStars = [];
 let collected = [];
-let projectCache = [];
-let shownIds = new Set(); // global dedup
-let fetched = false;
+let shownQuotes = new Set();
 let warpP = 0;
 let hudAlpha = 3;
-let dockCooldown = 0; // prevent collision spam
-let toastTimer = null;
+let dockCooldown = 0;
 
 // ─── DOM ───
 const startScreen = document.getElementById('startScreen');
@@ -227,10 +235,14 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Space') {
     e.preventDefault();
     if (state === S.START) launch();
-    else if (state === S.DOCK) resetAfterDock();
     else if (state === S.COMPLETE) warp();
   }
   if (e.code === 'KeyR' && state === S.PLAY) respawn();
+  // Arrow key resumes from dock
+  if (state === S.DOCK && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) {
+    e.preventDefault();
+    resumeAfterDock();
+  }
 });
 window.addEventListener('keyup', e => { keys[e.code] = false; });
 
@@ -239,7 +251,11 @@ window.addEventListener('keyup', e => { keys[e.code] = false; });
   if (i%2===0){
     const el=document.getElementById(v);
     if(el){
-      el.addEventListener('touchstart',e=>{e.preventDefault();keys[arr[i+1]]=true});
+      el.addEventListener('touchstart',e=>{
+        e.preventDefault();
+        if (state === S.DOCK) resumeAfterDock();
+        else keys[arr[i+1]]=true;
+      });
       el.addEventListener('touchend',e=>{e.preventDefault();keys[arr[i+1]]=false});
     }
   }
@@ -247,7 +263,6 @@ window.addEventListener('keyup', e => { keys[e.code] = false; });
 document.getElementById('tbLaunch')?.addEventListener('touchstart', e => {
   e.preventDefault();
   if (state === S.START) launch();
-  else if (state === S.DOCK) resetAfterDock();
   else if (state === S.COMPLETE) warp();
 });
 
@@ -259,8 +274,7 @@ function loadSystem() {
   }));
   targetPlanetIdx = findNextTarget();
   collected = [];
-  fetched = false;
-  projectCache = [];
+  shownQuotes.clear();
   updateHUD();
   updateStartScreen();
 
@@ -324,7 +338,6 @@ function launch() {
   rocket.px = rocket.x;
   rocket.py = rocket.y;
   hudAlpha = 3;
-  if (!fetched) fetchProjects();
 }
 function respawn() {
   rocket.x = W / 2;
@@ -334,106 +347,48 @@ function respawn() {
   rocket.docking = false;
 }
 
-// ─── Reset after dock ───
-function resetAfterDock() {
+// ─── Resume after dock (triggered by arrow key) ───
+function resumeAfterDock() {
+  if (state !== S.DOCK) return;
   toast.classList.remove('show');
   if (collected.length >= planets.length) {
     state = S.COMPLETE;
     showComplete();
     return;
   }
-  // Auto-reset rocket
+  // Show planet detail card then resume
+  const planet = planets[targetPlanetIdx];
+  const card = document.getElementById('tPlanet');
+  if (card.textContent === '') {
+    // First press: show planet detail
+    card.textContent = '🪐 ' + planet.name + '\n\n' + planet.info;
+    card.style.fontSize = '0.75rem';
+    card.style.color = '#ccc';
+    card.style.lineHeight = '1.5';
+    card.style.marginTop = '10px';
+    card.style.textAlign = 'left';
+    card.style.maxHeight = '200px';
+    card.style.overflowY = 'auto';
+    card.style.whiteSpace = 'pre-wrap';
+    return; // wait for next arrow press
+  }
+  // Second press: resume flying
   state = S.PLAY;
-  rocket.x = W / 2;
-  rocket.y = H * 0.88;
-  rocket.px = rocket.x;
-  rocket.py = rocket.y;
   rocket.speed = 80;
   rocket.angle = -Math.PI / 2;
   rocket.docking = false;
+  rocket.px = rocket.x;
+  rocket.py = rocket.y;
   targetPlanetIdx = findNextTarget();
   hudAlpha = 2;
 }
 
-// ─── API ───
-async function fetchProjects() {
-  fetched = true;
-  const queries = [
-    'topic:artificial-intelligence+topic:machine-learning+language:python',
-    'topic:llm+topic:generative-ai',
-    'topic:deep-learning+topic:transformers',
-    'topic:ai-agent+topic:langchain',
-  ];
-  const q = queries[Math.floor(Math.random() * queries.length)];
-  try {
-    const r = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=25`);
-    if (r.ok) {
-      const d = await r.json();
-      projectCache = (d.items || []).map(i => ({
-        id: 'gh-' + i.id,
-        name: i.full_name,
-        desc: i.description || 'An AI project',
-        url: i.html_url,
-        stars: i.stargazers_count
-      }));
-    }
-  } catch (e) {}
-  if (projectCache.length < 10) projectCache = generateFallback();
-}
-function generateFallback() {
-  const repos = [
-    { name:'ollama/ollama', desc:'Run Llama, DeepSeek, and other LLMs locally', url:'https://github.com/ollama/ollama', stars:125000 },
-    { name:'langchain-ai/langchain', desc:'Build context-aware reasoning applications', url:'https://github.com/langchain-ai/langchain', stars:105000 },
-    { name:'AutoGPT', desc:'Autonomous AI agents for task automation', url:'https://github.com/Significant-Gravitas/AutoGPT', stars:172000 },
-    { name:'huggingface/transformers', desc:'State-of-the-art ML for PyTorch, TF, JAX', url:'https://github.com/huggingface/transformers', stars:140000 },
-    { name:'deepseek-ai/DeepSeek-V3', desc:'Strong cost-effective MoE large language model', url:'https://github.com/deepseek-ai/DeepSeek-V3', stars:55000 },
-    { name:'openai/whisper', desc:'Robust Speech Recognition via Large-Scale Weak Supervision', url:'https://github.com/openai/whisper', stars:75000 },
-    { name:'anthropics/claude-code', desc:'Agentic coding tool — Claude in your terminal', url:'https://github.com/anthropics/claude-code', stars:30000 },
-    { name:'AUTOMATIC1111/stable-diffusion-webui', desc:'Stable Diffusion web UI', url:'https://github.com/AUTOMATIC1111/stable-diffusion-webui', stars:150000 },
-    { name:'langgenius/dify', desc:'Open-source LLM app development platform', url:'https://github.com/langgenius/dify', stars:60000 },
-    { name:'sgl-project/sglang', desc:'Fast serving framework for LLMs', url:'https://github.com/sgl-project/sglang', stars:15000 },
-    { name:'vllm-project/vllm', desc:'High-throughput LLM inference engine', url:'https://github.com/vllm-project/vllm', stars:45000 },
-    { name:'meta-llama/llama-models', desc:"Meta's official Llama model releases", url:'https://github.com/meta-llama/llama-models', stars:35000 },
-    { name:'crewAIInc/crewAI', desc:'Framework for orchestrating AI agent teams', url:'https://github.com/crewAIInc/crewAI', stars:25000 },
-    { name:'microsoft/autogen', desc:'Multi-agent conversation framework', url:'https://github.com/microsoft/autogen', stars:38000 },
-    { name:'gradio-app/gradio', desc:'Build & share ML web apps in Python', url:'https://github.com/gradio-app/gradio', stars:35000 },
-    { name:'comfyanonymous/ComfyUI', desc:'Powerful modular UI for Stable Diffusion', url:'https://github.com/comfyanonymous/ComfyUI', stars:65000 },
-  ];
-  return repos.map((r, i) => ({ id:'fb-'+i, ...r }));
-}
-
-function nextProject() {
-  // 60% real repo, 25% quote, 15% planet detail (but planet detail is shown separately)
-  const roll = Math.random();
-  if (roll < 0.3) {
-    const avail = AI_QUOTES.filter((_, i) => !shownIds.has('quote-' + i));
-    if (avail.length === 0) shownIds.clear(); // reset dedup if all shown
-    const q = avail.length > 0 ? avail[Math.floor(Math.random() * avail.length)] : AI_QUOTES[Math.floor(Math.random() * AI_QUOTES.length)];
-    const qi = AI_QUOTES.indexOf(q);
-    shownIds.add('quote-' + qi);
-    return { id:'q-'+qi, name:'', desc:q.text, url:'#', stars:0, isQuote:true, author:q.author };
-  }
-
-  if (projectCache.length === 0) {
-    const q = AI_QUOTES[Math.floor(Math.random() * AI_QUOTES.length)];
-    return { id:'q', name:'', desc:q.text, url:'#', stars:0, isQuote:true, author:q.author };
-  }
-
-  const avail = projectCache.filter(p => !shownIds.has(p.id));
-  if (avail.length === 0) {
-    // All shown, reset dedup for this system
-    for (const p of projectCache) shownIds.delete(p.id);
-    return projectCache[Math.floor(Math.random() * projectCache.length)];
-  }
-  const picked = avail[Math.floor(Math.random() * avail.length)];
-  shownIds.add(picked.id);
-  return picked;
-}
-
-function fmtStars(n) {
-  if (n >= 100000) return Math.floor(n / 1000) + 'k';
-  if (n >= 10000) return (n / 1000).toFixed(1) + 'k';
-  return String(n);
+function nextQuote() {
+  const avail = AI_QUOTES.filter((_, i) => !shownQuotes.has(i));
+  if (avail.length === 0) { shownQuotes.clear(); return AI_QUOTES[Math.floor(Math.random() * AI_QUOTES.length)]; }
+  const q = avail[Math.floor(Math.random() * avail.length)];
+  shownQuotes.add(AI_QUOTES.indexOf(q));
+  return q;
 }
 
 // ─── Dock = immediate light up ───
@@ -445,38 +400,26 @@ function dock() {
   // Light up the planet
   planet.lit = true;
   collected.push(targetPlanetIdx);
-  dockCooldown = 1.0; // 1 second cooldown
+  dockCooldown = 1.5;
 
-  // Get content
-  const project = nextProject();
-  const toastEl = document.getElementById('toast');
+  // Get quote
+  const quote = nextQuote();
+  document.getElementById('tQuote').textContent = quote.text;
+  document.getElementById('tAuthor').textContent = '— ' + quote.author;
+  document.getElementById('tProject').textContent = '';
+  document.getElementById('tDesc').textContent = '';
+  document.getElementById('tStars').textContent = '';
+  document.getElementById('tLink').textContent = '';
+  document.getElementById('tLink').style.display = 'none';
+  // Detailed planet card
+  document.getElementById('tPlanet').textContent = '';
 
-  // Build toast content based on type
-  if (project.isQuote) {
-    document.getElementById('tQuote').textContent = project.desc;
-    document.getElementById('tAuthor').textContent = '— ' + (project.author || '');
-    document.getElementById('tProject').textContent = '';
-    document.getElementById('tDesc').textContent = '';
-    document.getElementById('tStars').textContent = '';
-    document.getElementById('tLink').textContent = '';
-    document.getElementById('tLink').style.display = 'none';
-  } else {
-    document.getElementById('tQuote').textContent = '';
-    document.getElementById('tAuthor').textContent = '';
-    document.getElementById('tProject').textContent = project.name;
-    document.getElementById('tDesc').textContent = project.desc;
-    document.getElementById('tStars').textContent = '⭐ ' + fmtStars(project.stars);
-    document.getElementById('tLink').textContent = '查看项目 →';
-    document.getElementById('tLink').href = project.url;
-    document.getElementById('tLink').style.display = 'inline-block';
-  }
-
-  // Planet detail
-  document.getElementById('tPlanet').textContent = '🪐 ' + planet.name + ' · ' + colors.name + ' · ' + planet.info;
-
-  toastEl.classList.add('show');
+  toast.classList.add('show');
   state = S.DOCK;
+  // Stop rocket at dock position
+  rocket.speed = 0;
   rocket.docking = true;
+  rocket.x = pos.x; rocket.y = pos.y;
   rocket.tx = pos.x; rocket.ty = pos.y; rocket.ta = planet.angle;
 
   updateHUD();
@@ -492,12 +435,6 @@ function dock() {
       color: colors.glow
     });
   }
-
-  // Auto-hide toast after 4 seconds (or on SPACE)
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => {
-    if (state === S.DOCK) resetAfterDock();
-  }, 5000);
 }
 
 // ─── Complete / Warp ───
@@ -653,10 +590,13 @@ function draw() {
     ctx.fillText('按 SPACE 发射', W/2, H-18);
   }
   if (state === S.DOCK) {
-    ctx.fillStyle = 'rgba(200,200,200,0.4)';
-    ctx.font = '11px "PingFang SC","Microsoft YaHei",sans-serif';
+    const pulse = 0.5+0.5*Math.sin(time*2);
+    ctx.fillStyle = `rgba(200,200,200,${0.35+pulse*0.25})`;
+    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('按 SPACE 继续', W/2, H-18);
+    const planet = planets[targetPlanetIdx];
+    const card = document.getElementById('tPlanet');
+    ctx.fillText(card.textContent === '' ? '按方向键查看行星介绍' : '按方向键继续飞行', W/2, H-18);
   }
 
   if (state === S.WARP) drawWarp();
@@ -697,31 +637,21 @@ function drawSolarSystem() {
     const py = cy + Math.sin(p.angle) * orbitR;
     const colors = planetColors(p.temp);
 
-    // Unlit planet subtle glow (so they're visible)
-    if (!p.lit) {
-      const uGlow = ctx.createRadialGradient(px, py, 0, px, py, p.size * 1.8);
-      uGlow.addColorStop(0, colors.body.replace(')', ',0.3)').replace('rgb', 'rgba'));
-      uGlow.addColorStop(1, 'transparent');
-      ctx.fillStyle = uGlow;
-      ctx.beginPath(); ctx.arc(px, py, p.size * 1.8, 0, Math.PI*2); ctx.fill();
-    }
-
-    // Lit planet glow (much brighter)
+    // Lit planet glow
     if (p.lit) {
       const glowSize = p.size * 3.5;
       const pGrad = ctx.createRadialGradient(px, py, 0, px, py, glowSize);
-      const glowColor = colors.glow;
-      pGrad.addColorStop(0, glowColor);
-      pGrad.addColorStop(0.4, glowColor.replace(')', ',0.6)').replace('rgb', 'rgba'));
+      pGrad.addColorStop(0, colors.glow);
+      pGrad.addColorStop(0.4, colors.glow.replace(')', ',0.5)').replace('rgb', 'rgba'));
       pGrad.addColorStop(1, 'transparent');
       ctx.fillStyle = pGrad;
       ctx.beginPath(); ctx.arc(px, py, glowSize, 0, Math.PI*2); ctx.fill();
     }
 
     // Planet body
-    ctx.fillStyle = p.lit ? colors.bright : colors.body;
-    ctx.strokeStyle = p.lit ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.4)';
-    ctx.lineWidth = p.lit ? 1.8 : 1.2;
+    ctx.fillStyle = p.lit ? colors.litBody : colors.body;
+    ctx.strokeStyle = p.lit ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = p.lit ? 1.8 : 1;
     ctx.beginPath(); ctx.arc(px, py, p.size, 0, Math.PI*2); ctx.fill();
     ctx.stroke();
 
