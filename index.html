@@ -3,43 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>🚀 Rocket Galaxy</title>
+<title>🚀 星际对接 · Star Dock</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#1a1a1a}
-body{display:flex;align-items:center;justify-content:center;font-family:"PingFang SC","Microsoft YaHei",sans-serif}
-canvas{display:block;image-rendering:pixelated}
-#ui{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}
+html,body{width:100vw;height:100vh;height:100dvh;overflow:hidden;background:#111}
+canvas{display:block;position:fixed;top:0;left:0}
+#ui{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}
 
-.start-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;pointer-events:auto;z-index:20}
-.start-overlay.hidden{display:none}
-.start-card{background:#fff;border:3px solid #111;border-radius:20px;padding:30px 40px;text-align:center;box-shadow:8px 8px 0 #111;max-width:380px}
-.start-card h1{font-size:1.6rem;color:#111;margin-bottom:8px;letter-spacing:2px}
-.start-card .emoji{font-size:3rem;display:block;margin-bottom:12px}
-.start-card .hint{font-size:0.85rem;color:#888;margin-top:16px}
-.start-card kbd{display:inline-block;padding:3px 10px;background:#111;color:#fff;border-radius:4px;font-size:0.9em}
+.start-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;pointer-events:auto;z-index:20;transition:opacity 0.4s}
+.start-overlay.hidden{opacity:0;pointer-events:none}
+.start-card{background:#1a1a1a;border:2px solid #555;border-radius:20px;padding:32px 44px;text-align:center;max-width:400px}
+.start-card .emoji{font-size:3.5rem;display:block;margin-bottom:10px}
+.start-card h1{font-size:1.5rem;color:#eee;margin-bottom:6px;letter-spacing:3px;font-weight:400}
+.start-card .sub{font-size:0.8rem;color:#888;margin-bottom:14px;line-height:1.5}
+.start-card kbd{display:inline-block;padding:4px 12px;background:#333;color:#ddd;border:1px solid #555;border-radius:4px;font-size:0.85em}
 
-.success-card{position:absolute;bottom:100px;left:50%;transform:translateX(-50%);background:#fff;border:3px solid #111;border-radius:16px;padding:20px 24px;max-width:360px;width:90%;text-align:center;pointer-events:auto;display:none;z-index:30;box-shadow:6px 6px 0 #111}
-.success-card.show{display:block}
-.success-card h3{font-size:1rem;color:#111;margin-bottom:10px}
-.success-card .pname{font-weight:bold;font-size:0.95rem;color:#111;word-break:break-all}
-.success-card .pdesc{font-size:0.8rem;color:#666;margin:6px 0}
-.success-card .pstars{font-size:0.75rem;color:#999}
-.success-card .plink{display:inline-block;margin-top:8px;padding:6px 14px;background:#111;color:#fff;text-decoration:none;border-radius:8px;font-size:0.8rem}
-.success-card .collect-btn{display:block;margin:10px auto 0;padding:8px 20px;background:#fff;border:2px solid #111;border-radius:10px;font-size:0.85rem;cursor:pointer;font-weight:bold}
-.success-card .collect-btn:hover{background:#111;color:#fff}
+.modal{position:absolute;bottom:120px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:2px solid #555;border-radius:16px;padding:20px 24px;max-width:380px;width:90%;text-align:center;pointer-events:auto;display:none;z-index:30}
+.modal.show{display:block}
+.modal h3{font-size:1.05rem;color:#eee;margin-bottom:10px}
+.modal .pname{font-weight:bold;font-size:0.95rem;color:#fff;word-break:break-all}
+.modal .pdesc{font-size:0.8rem;color:#999;margin:6px 0;line-height:1.4}
+.modal .pstars{font-size:0.75rem;color:#777}
+.modal .plink{display:inline-block;margin-top:8px;padding:6px 14px;background:#333;color:#ddd;text-decoration:none;border-radius:8px;font-size:0.8rem;border:1px solid #555;transition:all 0.2s}
+.modal .plink:hover{background:#444;border-color:#888}
+.modal .collect-btn{display:block;margin:12px auto 0;padding:10px 24px;background:#1a1a1a;border:2px solid #888;color:#ddd;border-radius:10px;font-size:0.9rem;cursor:pointer;font-weight:bold;transition:all 0.2s}
+.modal .collect-btn:hover{background:#333;border-color:#fff;color:#fff}
 
-.touch-pad{position:absolute;bottom:30px;left:0;right:0;display:none;pointer-events:auto;z-index:15;padding:0 20px}
-@media(pointer:coarse){.touch-pad{display:flex;gap:10px;justify-content:center;align-items:center}}
-.touch-pad button{width:55px;height:55px;border-radius:14px;border:2px solid #111;background:rgba(255,255,255,0.9);font-size:1.2rem;cursor:pointer;touch-action:manipulation}
-.touch-pad .big-btn{padding:0 24px;width:auto;font-weight:bold}
-.hint-bar{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;z-index:5}
-.hint-bar span{font-size:0.7rem;color:rgba(255,255,255,0.5);letter-spacing:1px}
+.hud{position:absolute;top:16px;left:20px;pointer-events:none;z-index:5}
+.hud .sysname{font-size:0.8rem;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-bottom:4px}
+.hud .lit-dots{display:flex;gap:5px}
+.hud .lit-dots .ld{width:7px;height:7px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);transition:all 0.5s}
+.hud .lit-dots .ld.on{background:#fff;border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,0.6)}
 
-.counter{position:absolute;top:16px;left:20px;pointer-events:none;z-index:5}
-.counter .dots{display:flex;gap:4px;margin-top:4px}
-.counter .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2)}
-.counter .dot.on{background:#fff;box-shadow:0 0 6px #fff}
+.touch-pad{position:fixed;bottom:24px;left:0;right:0;display:none;pointer-events:auto;z-index:15;padding:0 16px}
+@media(pointer:coarse){.touch-pad{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}}
+.touch-pad button{width:52px;height:52px;border-radius:14px;border:2px solid #555;background:rgba(30,30,30,0.9);color:#ddd;font-size:1.1rem;cursor:pointer;touch-action:manipulation}
+.touch-pad .big-btn{padding:0 20px;width:auto;font-weight:bold;font-size:0.85rem}
 </style>
 </head>
 <body>
@@ -48,28 +47,26 @@ canvas{display:block;image-rendering:pixelated}
 
 <div id="ui">
   <div class="start-overlay" id="startScreen">
-    <div class="start-card" id="startCard">
-      <span class="emoji" id="galaxyEmoji">🌌</span>
-      <h1 id="galaxyName">太阳系</h1>
-      <p class="hint">按 <kbd>SPACE</kbd> 发射火箭</p>
+    <div class="start-card">
+      <span class="emoji" id="sysEmoji">☀️</span>
+      <h1 id="sysName">太阳系</h1>
+      <p class="sub" id="sysDesc">我们的家园 · 8颗行星</p>
+      <p style="margin-top:12px"><kbd>SPACE</kbd> <span style="color:#888;font-size:0.8rem">发射火箭</span></p>
     </div>
   </div>
 
-  <div class="success-card" id="successCard">
-    <h3>🎯 对接成功！</h3>
+  <div class="modal" id="modal">
+    <h3 id="modalTitle">🎯 对接成功！</h3>
     <div class="pname" id="pName"></div>
     <div class="pdesc" id="pDesc"></div>
     <div class="pstars" id="pStars"></div>
-    <a class="plink" id="pLink" href="#" target="_blank">查看项目 →</a>
-    <button class="collect-btn" id="collectBtn">收集 ⭐</button>
+    <a class="plink" id="pLink" href="#" target="_blank">查看详情 →</a>
+    <button class="collect-btn" id="collectBtn">⭐ 点亮星辰</button>
   </div>
 
-  <div class="counter" id="counter">
-    <div class="dots">
-      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-    </div>
+  <div class="hud">
+    <div class="sysname" id="hudName">太阳系</div>
+    <div class="lit-dots" id="litDots"></div>
   </div>
 
   <div class="touch-pad" id="touchPad">
@@ -77,584 +74,814 @@ canvas{display:block;image-rendering:pixelated}
     <button id="tbD">▼</button>
     <button id="tbU">▲</button>
     <button id="tbR">▶</button>
-    <button class="big-btn" id="tbLaunch" style="background:#111;color:#fff">🚀</button>
+    <button class="big-btn" id="tbLaunch" style="background:#333;border-color:#888">LAUNCH</button>
   </div>
-
-  <div class="hint-bar"><span>↑↓ speed ←→ steer SPACE launch R reset</span></div>
 </div>
 
 <script>
-// ─── Constants ───
-const W=800,H=600;
+// ─────────────────────────────────
+//  STAR DOCK — 星际对接
+//  Black & white anime cute style
+// ─────────────────────────────────
 
-// ─── Galaxies Data ───
-const GALAXIES=[
-  {name:'太阳系',emoji:'☀️',desc:'我们的家园 · 1颗恒星 · 8颗行星',spin:0.6,orbit:110,color:'#333'},
-  {name:'半人马座α',emoji:'⭐',desc:'最近的恒星系统 · 距地球4.37光年',spin:0.8,orbit:115,color:'#444'},
-  {name:'天狼星',emoji:'💫',desc:'夜空最亮的恒星 · 距地球8.6光年',spin:0.9,orbit:118,color:'#3a3a3a'},
-  {name:'仙女座星系',emoji:'🌌',desc:'万亿恒星 · 距地球250万光年',spin:1.1,orbit:125,color:'#555'},
-  {name:'猎户座星云',emoji:'✨',desc:'恒星摇篮 · 距地球1344光年',spin:1.2,orbit:120,color:'#4a4a4a'},
-  {name:'昴星团',emoji:'💫',desc:'七姐妹星团 · 约1000颗恒星',spin:1.0,orbit:122,color:'#3c3c3c'},
-  {name:'大麦哲伦云',emoji:'🌠',desc:'银河系最大卫星星系 · 300亿恒星',spin:1.3,orbit:128,color:'#505050'},
-  {name:'草帽星系',emoji:'🎩',desc:'独特的尘埃环 · 1000亿恒星',spin:1.4,orbit:132,color:'#585858'},
-  {name:'涡状星系',emoji:'🌀',desc:'完美螺旋结构 · 1600亿恒星',spin:1.5,orbit:135,color:'#484848'},
-  {name:'车轮星系',emoji:'🛞',desc:'独特的车轮形状 · 500亿恒星',spin:1.7,orbit:140,color:'#606060'},
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H, dpr;
+
+// ─── Planets Data (real relative orbital data) ───
+const SOLAR_SYSTEMS = [
+  {
+    name: '太阳系', emoji: '☀️', desc: '我们的家园 · 1颗恒星 · 8颗行星',
+    planets: [
+      { name:'水星', emoji:'☿',   dist:0.39, period:0.24,  size:4,  color:'#999' },
+      { name:'金星', emoji:'♀',   dist:0.72, period:0.62,  size:7,  color:'#bbb' },
+      { name:'地球', emoji:'🌍',  dist:1.00, period:1.00,  size:7,  color:'#fff' },
+      { name:'火星', emoji:'♂',   dist:1.52, period:1.88,  size:5,  color:'#aaa' },
+      { name:'木星', emoji:'♃',   dist:2.50, period:4.50,  size:14, color:'#ddd' },
+      { name:'土星', emoji:'♄',   dist:3.20, period:7.00,  size:12, color:'#ccc' },
+      { name:'天王星',emoji:'⛢',  dist:4.00, period:12.0,  size:9,  color:'#bbb' },
+      { name:'海王星',emoji:'♆',  dist:4.50, period:16.0,  size:9,  color:'#aaa' },
+    ]
+  },
+  {
+    name: '比邻星系', emoji: '⭐', desc: '最近的系外行星系统 · 距地球4.2光年',
+    planets: [
+      { name:'比邻b', emoji:'🪐', dist:0.30, period:0.30, size:5,  color:'#999' },
+      { name:'比邻c', emoji:'🪐', dist:0.60, period:0.70, size:6,  color:'#aaa' },
+      { name:'比邻d', emoji:'🪐', dist:0.90, period:1.20, size:5,  color:'#bbb' },
+      { name:'Prox e',emoji:'🪐', dist:1.40, period:2.00, size:7,  color:'#ccc' },
+      { name:'Prox f',emoji:'🪐', dist:2.00, period:3.50, size:10, color:'#ddd' },
+    ]
+  },
+  {
+    name: 'TRAPPIST-1', emoji: '💫', desc: '7颗类地行星 · 距地球40光年',
+    planets: [
+      { name:'TRAPPIST-1b',emoji:'🪐',dist:0.25,period:0.25,size:5,color:'#999'},
+      { name:'TRAPPIST-1c',emoji:'🪐',dist:0.40,period:0.50,size:5,color:'#aaa'},
+      { name:'TRAPPIST-1d',emoji:'🪐',dist:0.55,period:0.75,size:5,color:'#bbb'},
+      { name:'TRAPPIST-1e',emoji:'🌍',dist:0.70,period:1.00,size:6,color:'#fff'},
+      { name:'TRAPPIST-1f',emoji:'🪐',dist:0.90,period:1.50,size:5,color:'#ccc'},
+      { name:'TRAPPIST-1g',emoji:'🪐',dist:1.10,period:2.00,size:6,color:'#ddd'},
+      { name:'TRAPPIST-1h',emoji:'🪐',dist:1.40,period:3.00,size:4,color:'#eee'},
+    ]
+  }
 ];
 
-const FALLBACK=[
-  {id:'fb-1',name:'ollama/ollama',desc:'Run LLMs locally.',url:'https://github.com/ollama/ollama',stars:125000},
-  {id:'fb-2',name:'langchain-ai/langchain',desc:'Build reasoning apps.',url:'https://github.com/langchain-ai/langchain',stars:105000},
-  {id:'fb-3',name:'AutoGPT',desc:'Autonomous AI agents.',url:'https://github.com/Significant-Gravitas/AutoGPT',stars:172000},
-  {id:'fb-4',name:'transformers',desc:'State-of-the-art ML.',url:'https://github.com/huggingface/transformers',stars:140000},
-  {id:'fb-5',name:'tensorflow',desc:'ML framework for everyone.',url:'https://github.com/tensorflow/tensorflow',stars:190000},
-  {id:'fb-6',name:'pytorch',desc:'Dynamic neural networks.',url:'https://github.com/pytorch/pytorch',stars:87000},
-  {id:'fb-7',name:'claude-code',desc:'Agentic coding by Anthropic.',url:'https://github.com/anthropics/claude-code',stars:30000},
-  {id:'fb-8',name:'DeepSeek-V3',desc:'Strong cost-effective MoE LLM.',url:'https://github.com/deepseek-ai/DeepSeek-V3',stars:55000},
-  {id:'fb-9',name:'whisper',desc:'Robust speech recognition.',url:'https://github.com/openai/whisper',stars:75000},
-  {id:'fb-10',name:'Meta Llama',desc:"Meta's LLM.",url:'https://github.com/meta-llama/llama',stars:60000},
-  {id:'fb-11',name:'gpt-pilot',desc:'AI that builds full apps.',url:'https://github.com/Pythagora-io/gpt-pilot',stars:32000},
-  {id:'fb-12',name:'stable-diffusion',desc:'Image synthesis model.',url:'https://github.com/Stability-AI/stablediffusion',stars:40000},
-  {id:'fb-13',name:'sglang',desc:'Fast LLM inference.',url:'https://github.com/sgl-project/sglang',stars:15000},
-  {id:'fb-14',name:'vllm',desc:'High-throughput LLM serving.',url:'https://github.com/vllm-project/vllm',stars:45000},
-  {id:'fb-15',name:'dify',desc:'LLM app development platform.',url:'https://github.com/langgenius/dify',stars:60000},
+// ─── AI Quotes ───
+const AI_QUOTES = [
+  { text:'"The development of full artificial intelligence could spell the end of the human race."', author:'Stephen Hawking' },
+  { text:'"AI is the new electricity."', author:'Andrew Ng' },
+  { text:'"The question is not whether intelligent machines can have emotions, but whether machines can be intelligent without emotions."', author:'Marvin Minsky' },
+  { text:'"By far, the greatest danger of Artificial Intelligence is that people conclude too early that they understand it."', author:'Eliezer Yudkowsky' },
+  { text:'"Machine intelligence is the last invention that humanity will ever need to make."', author:'Nick Bostrom' },
+  { text:'"The pace of progress in artificial intelligence is incredibly fast. Unless you have direct exposure to groups like DeepMind, you have no idea how fast."', author:'Elon Musk' },
+  { text:'"Artificial intelligence will reach human levels by around 2029. Follow that out further to, say, 2045, we will have multiplied the intelligence, the human biological machine intelligence of our civilization a billion-fold."', author:'Ray Kurzweil' },
+  { text:'"AI doesn\'t have to be evil to destroy humanity — if AI has a goal and humanity just happens to be in the way, it will destroy humanity as a matter of course."', author:'Elon Musk' },
+  { text:'"Some people call this artificial intelligence, but the reality is this technology will enhance us. So instead of artificial intelligence, I think we\'ll augment our intelligence."', author:'Ginni Rometty' },
+  { text:'"The coming era of Artificial Intelligence will not be the era of war, but be the era of deep compassion, non-violence, and love."', author:'Amit Ray' },
+  { text:'"A year spent in artificial intelligence is enough to make one believe in God."', author:'Alan Perlis' },
+  { text:'"I visualize a time when we will be to robots what dogs are to humans, and I\'m rooting for the machines."', author:'Claude Shannon' },
+  { text:'"The best way to predict the future is to invent it."', author:'Alan Kay' },
+  { text:'"We are stuck with technology when what we really want is just stuff that works."', author:'Douglas Adams' },
+  { text:'"It is not the strongest of the species that survives, nor the most intelligent. It is the one most adaptable to change."', author:'Charles Darwin (applied to AI)' },
 ];
 
 // ─── State ───
-const STATE={START:'start',PLAY:'play',SUCCESS:'success',COLLECTED:'collected',COMPLETE:'complete',WARP:'warp'};
-let state=STATE.START;
-let keys={};
-let time=0,lastTime=0;
-let galaxyIdx=0;
-let galaxyAngle=0;
-let rocket={x:400,y:520,speed:120,angle:-Math.PI/2,lit:false,docked:false,tx:0,ty:0,ta:0};
-let particles=[];
-let stars=[];
-let collected=[];
-let projectCache=[];
-let pendingProject=null;
-let fetched=false;
-let warpP=0,warpPhase='';
-let hudAlpha=5;
+const S = { START:'start', PLAY:'play', DOCK:'dock', COLLECTED:'collected', COMPLETE:'complete', WARP:'warp' };
+let state = S.START;
+let keys = {};
+let time = 0, lastTime = 0;
+let sysIdx = 0;
+let systemData;
+let planets = [];        // {angle, lit}
+let rocket = { x:0, y:0, speed:0, angle:0, lit:false, docking:false, tx:0, ty:0, ta:0 };
+let targetPlanetIdx = 0;
+let particles = [];
+let bgStars = [];
+let collected = [];
+let projectCache = [];
+let pendingProject = null;
+let fetched = false;
+let warpP = 0;
+let hudAlpha = 3;
+let dockedSlots = [];    // {x, y, glow} — permanent lit positions
 
 // ─── DOM ───
-const canvas=document.getElementById('c');
-const ctx=canvas.getContext('2d');
-const startScreen=document.getElementById('startScreen');
-const startCard=document.getElementById('startCard');
-const galaxyNameEl=document.getElementById('galaxyName');
-const galaxyEmojiEl=document.getElementById('galaxyEmoji');
-const successCard=document.getElementById('successCard');
-const touchPad=document.getElementById('touchPad');
-
-canvas.width=W;canvas.height=H;
-
-// ─── Init stars ───
-for(let i=0;i<200;i++){
-  stars.push({x:Math.random()*W,y:Math.random()*H,r:0.3+Math.random()*2,a:0.3+Math.random()*0.7,s:0.5+Math.random()*2,o:Math.random()*Math.PI*2});
-}
+const startScreen = document.getElementById('startScreen');
+const modal = document.getElementById('modal');
+const sysNameEl = document.getElementById('sysName');
+const sysEmojiEl = document.getElementById('sysEmoji');
+const sysDescEl = document.getElementById('sysDesc');
+const hudNameEl = document.getElementById('hudName');
+const litDotsEl = document.getElementById('litDots');
+const touchPad = document.getElementById('touchPad');
 
 // ─── Resize ───
-function resize(){
-  const s=Math.min(window.innerWidth/W,window.innerHeight/H);
-  canvas.style.width=W*s+'px';
-  canvas.style.height=H*s+'px';
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2); // cap for perf
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // reset
+  ctx.scale(dpr, dpr);
 }
+window.addEventListener('resize', resize);
 resize();
-window.addEventListener('resize',resize);
+
+// ─── Init background stars ───
+for (let i = 0; i < 300; i++) {
+  bgStars.push({
+    x: Math.random(), y: Math.random(),
+    r: 0.3 + Math.random() * 1.8,
+    a: 0.2 + Math.random() * 0.7,
+    s: 0.5 + Math.random() * 2.5,
+    o: Math.random() * Math.PI * 2
+  });
+}
 
 // ─── Input ───
-window.addEventListener('keydown',e=>{
-  keys[e.code]=true;
-  if(e.code==='Space'){
+window.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if (e.code === 'Space') {
     e.preventDefault();
-    if(state===STATE.START) launch();
-    else if(state===STATE.COLLECTED) resetRocket();
-    else if(state===STATE.COMPLETE) warp();
+    if (state === S.START) launch();
+    else if (state === S.COLLECTED) continueGame();
+    else if (state === S.COMPLETE) warp();
   }
-  if(e.code==='KeyR'&&state===STATE.PLAY) resetRocket();
+  if (e.code === 'KeyR' && state === S.PLAY) respawn();
 });
-window.addEventListener('keyup',e=>{keys[e.code]=false});
+window.addEventListener('keyup', e => { keys[e.code] = false; });
 
 // Touch
-const tbU=document.getElementById('tbU'),tbD=document.getElementById('tbD'),tbL=document.getElementById('tbL'),tbR=document.getElementById('tbR'),tbLaunch=document.getElementById('tbLaunch');
-function setupTouch(el,code){
+['tbU','ArrowUp','tbD','ArrowDown','tbL','ArrowLeft','tbR','ArrowRight'].reduce((a,v,i)=>{
+  if(i%2===0){a.push([document.getElementById(v)]);return a}
+  a[a.length-1].push(v);return a
+},[]).forEach(([el,code])=>{
+  if(!el) return;
   el.addEventListener('touchstart',e=>{e.preventDefault();keys[code]=true});
   el.addEventListener('touchend',e=>{e.preventDefault();keys[code]=false});
-}
-setupTouch(tbU,'ArrowUp');setupTouch(tbD,'ArrowDown');setupTouch(tbL,'ArrowLeft');setupTouch(tbR,'ArrowRight');
-tbLaunch.addEventListener('touchstart',e=>{
+});
+document.getElementById('tbLaunch')?.addEventListener('touchstart', e => {
   e.preventDefault();
-  if(state===STATE.START) launch();
-  else if(state===STATE.COLLECTED) resetRocket();
-  else if(state===STATE.COMPLETE) warp();
+  if (state === S.START) launch();
+  else if (state === S.COLLECTED) continueGame();
+  else if (state === S.COMPLETE) warp();
 });
-document.getElementById('collectBtn').addEventListener('click',()=>{
-  if(state===STATE.SUCCESS) collect();
+document.getElementById('collectBtn').addEventListener('click', () => {
+  if (state === S.DOCK) collect();
 });
 
-// ─── Galaxy functions ───
-function loadGalaxy(){
-  const g=GALAXIES[galaxyIdx];
-  galaxyNameEl.textContent=g.name;
-  galaxyEmojiEl.textContent=g.emoji;
-  startCard.querySelector('.hint').innerHTML='按 <kbd>SPACE</kbd> 发射火箭';
+// ─── System init ───
+function loadSystem() {
+  systemData = SOLAR_SYSTEMS[sysIdx % SOLAR_SYSTEMS.length];
+  planets = systemData.planets.map((p, i) => ({
+    ...p,
+    angle: Math.random() * Math.PI * 2,
+    lit: false,
+    idx: i
+  }));
+  targetPlanetIdx = 0;
+  collected = [];
+  dockedSlots = [];
+  fetched = false;
+  projectCache = [];
+  pendingProject = null;
+  updateHUD();
+
+  const p0 = planets[0];
+  sysNameEl.textContent = systemData.name;
+  sysEmojiEl.textContent = systemData.emoji;
+  sysDescEl.textContent = systemData.desc;
   startScreen.classList.remove('hidden');
-  galaxyAngle=0;
-  rocket={x:400,y:520,speed:120,angle:-Math.PI/2,lit:false,docked:false,tx:0,ty:0,ta:0};
-  collected=[];
-  fetched=false;
-  projectCache=[];
-  pendingProject=null;
-  updateDots();
-}
+  modal.classList.remove('show');
 
-// ─── Launch / Reset ───
-function launch(){
-  state=STATE.PLAY;
-  startScreen.classList.add('hidden');
-  rocket.x=400;rocket.y=520;rocket.speed=120;rocket.angle=-Math.PI/2;rocket.docked=false;rocket.lit=false;
-  hudAlpha=5;
-  if(!fetched) fetchProjects();
-}
-function resetRocket(){
-  state=STATE.PLAY;
-  rocket.x=400;rocket.y=520;rocket.speed=120;rocket.angle=-Math.PI/2;rocket.docked=false;rocket.lit=false;
-  pendingProject=null;
-  successCard.classList.remove('show');
-  hudAlpha=5;
-}
-
-// ─── API ───
-async function fetchProjects(){
-  fetched=true;
-  try{
-    const r=await fetch('https://api.github.com/search/repositories?q=topic:artificial-intelligence+topic:machine-learning&sort=stars&order=desc&per_page=15');
-    if(r.ok){
-      const d=await r.json();
-      projectCache=d.items.map(i=>({id:'gh-'+i.id,name:i.full_name,desc:i.description||'An AI project',url:i.html_url,stars:i.stargazers_count}));
-    }
-  }catch(e){}
-  if(projectCache.length<5) projectCache=FALLBACK;
-}
-function nextProject(){
-  if(projectCache.length===0) return FALLBACK[Math.floor(Math.random()*FALLBACK.length)];
-  const avail=projectCache.filter(p=>!collected.includes(p.id));
-  if(avail.length===0) return projectCache[Math.floor(Math.random()*projectCache.length)];
-  return avail[Math.floor(Math.random()*avail.length)];
-}
-
-// ─── Dock / Collect ───
-function dock(project){
-  state=STATE.SUCCESS;
-  pendingProject=project;
-  rocket.docked=true;
-  const slot=getSlot();
-  rocket.tx=slot.x;rocket.ty=slot.y;rocket.ta=slot.angle;
-  document.getElementById('pName').textContent=project.name;
-  document.getElementById('pDesc').textContent=project.desc;
-  document.getElementById('pStars').textContent='⭐ '+fmtStars(project.stars);
-  document.getElementById('pLink').href=project.url;
-  successCard.classList.add('show');
-  // Particles
-  for(let i=0;i<30;i++){
-    const a=(i/30)*Math.PI*2;
-    particles.push({x:rocket.x,y:rocket.y,vx:Math.cos(a)*(40+Math.random()*60),vy:Math.sin(a)*(40+Math.random()*60),life:1,ml:1,size:1.5+Math.random()*3,type:'spark'});
-  }
-}
-function collect(){
-  if(!pendingProject) return;
-  state=STATE.COLLECTED;
-  collected.push(pendingProject.id);
-  rocket.lit=true;
-  pendingProject=null;
-  successCard.classList.remove('show');
-  for(let i=0;i<20;i++){
-    const a=(i/20)*Math.PI*2;
-    particles.push({x:rocket.x,y:rocket.y,vx:Math.cos(a)*30,vy:Math.sin(a)*30-10,life:1.5,ml:1.5,size:2+Math.random()*3,type:'glow'});
-  }
-  updateDots();
-  if(collected.length>=9){
-    setTimeout(()=>{state=STATE.COMPLETE;showComplete();},1500);
-  }
-}
-function fmtStars(n){
-  if(n>=100000) return Math.floor(n/1000)+'k';
-  if(n>=10000) return (n/1000).toFixed(1)+'k';
-  return String(n);
-}
-function updateDots(){
-  const dots=document.querySelectorAll('#counter .dot');
-  dots.forEach((d,i)=>{d.classList.toggle('on',i<collected.length)});
-}
-
-// ─── Warp ───
-function warp(){
-  state=STATE.WARP;
-  warpP=0;
-  warpPhase='out';
-  startScreen.classList.add('hidden');
-}
-function showComplete(){
-  const g=GALAXIES[galaxyIdx];
-  document.getElementById('galaxyEmoji').textContent='🚀';
-  document.getElementById('galaxyName').textContent=g.name+' 完成！';
-  startCard.querySelector('.hint').innerHTML='按 <kbd>SPACE</kbd> 前往下一个星系';
-  startScreen.classList.remove('hidden');
-}
-
-// ─── Slot ───
-function getSlot(){
-  const g=GALAXIES[galaxyIdx];
-  const a=galaxyAngle+Math.PI*0.25;
-  return{
-    x:400+Math.cos(a)*g.orbit,
-    y:130+Math.sin(a)*g.orbit,
-    angle:a+Math.PI/2
+  // Place rocket at bottom center
+  rocket = {
+    x: W / 2, y: H * 0.88,
+    speed: 0, angle: -Math.PI / 2,
+    lit: false, docking: false,
+    tx: 0, ty: 0, ta: 0
   };
 }
 
+function updateHUD() {
+  hudNameEl.textContent = systemData.name;
+  let html = '';
+  for (let i = 0; i < planets.length; i++) {
+    html += `<span class="ld${collected.includes(i) ? ' on' : ''}"></span>`;
+  }
+  litDotsEl.innerHTML = html;
+}
+
+// ─── Get planet world position ───
+function getPlanetPos(idx) {
+  const p = planets[idx];
+  const cx = W / 2;
+  const cy = H * 0.42; // solar system center (upper half)
+  const maxDist = Math.min(W, H) * 0.38;
+  const dist = p.dist / systemData.planets[systemData.planets.length - 1].dist * maxDist * 0.85;
+  return {
+    x: cx + Math.cos(p.angle) * dist,
+    y: cy + Math.sin(p.angle) * dist,
+    dist,
+    cx, cy
+  };
+}
+
+// ─── Launch / Continue / Respawn ───
+function launch() {
+  state = S.PLAY;
+  startScreen.classList.add('hidden');
+  rocket.speed = 80;
+  rocket.angle = -Math.PI / 2;
+  rocket.docking = false;
+  rocket.lit = false;
+  hudAlpha = 3;
+  if (!fetched) fetchProjects();
+}
+function continueGame() {
+  state = S.PLAY;
+  rocket.speed = 80;
+  rocket.angle = -Math.PI / 2;
+  rocket.docking = false;
+  rocket.x = W / 2;
+  rocket.y = H * 0.88;
+  pendingProject = null;
+  modal.classList.remove('show');
+  hudAlpha = 2;
+  // Next target
+  targetPlanetIdx = (targetPlanetIdx + 1) % planets.length;
+  // Skip already lit ones, find next unlit
+  let tries = 0;
+  while (collected.includes(targetPlanetIdx) && tries < planets.length) {
+    targetPlanetIdx = (targetPlanetIdx + 1) % planets.length;
+    tries++;
+  }
+}
+function respawn() {
+  rocket.x = W / 2;
+  rocket.y = H * 0.88;
+  rocket.speed = 80;
+  rocket.angle = -Math.PI / 2;
+  rocket.docking = false;
+}
+
+// ─── API ───
+async function fetchProjects() {
+  fetched = true;
+  // Try multiple queries for variety
+  const queries = [
+    'topic:artificial-intelligence+topic:machine-learning+language:python',
+    'topic:llm+topic:generative-ai',
+    'topic:deep-learning+topic:transformers'
+  ];
+  const q = queries[Math.floor(Math.random() * queries.length)];
+  try {
+    const r = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=20`);
+    if (r.ok) {
+      const d = await r.json();
+      projectCache = (d.items || []).map(i => ({
+        id: 'gh-' + i.id, name: i.full_name,
+        desc: i.description || 'An amazing AI project',
+        url: i.html_url, stars: i.stargazers_count,
+        lang: i.language
+      }));
+    }
+  } catch (e) {}
+  if (projectCache.length < 8) projectCache = generateFallback();
+}
+function generateFallback() {
+  const repos = [
+    { name:'ollama/ollama', desc:'Run Llama, DeepSeek, and other LLMs locally', url:'https://github.com/ollama/ollama', stars:125000 },
+    { name:'langchain-ai/langchain', desc:'Build context-aware reasoning applications with LangChain', url:'https://github.com/langchain-ai/langchain', stars:105000 },
+    { name:'Significant-Gravitas/AutoGPT', desc:'Autonomous AI agents for task automation', url:'https://github.com/Significant-Gravitas/AutoGPT', stars:172000 },
+    { name:'huggingface/transformers', desc:'State-of-the-art ML for PyTorch, TensorFlow, and JAX', url:'https://github.com/huggingface/transformers', stars:140000 },
+    { name:'deepseek-ai/DeepSeek-V3', desc:'Strong, cost-effective MoE large language model', url:'https://github.com/deepseek-ai/DeepSeek-V3', stars:55000 },
+    { name:'meta-llama/llama-models', desc:"Meta's official Llama model releases", url:'https://github.com/meta-llama/llama-models', stars:35000 },
+    { name:'openai/whisper', desc:'Robust Speech Recognition via Large-Scale Weak Supervision', url:'https://github.com/openai/whisper', stars:75000 },
+    { name:'anthropics/claude-code', desc:'Agentic coding tool by Anthropic — Claude in your terminal', url:'https://github.com/anthropics/claude-code', stars:30000 },
+    { name:'AUTOMATIC1111/stable-diffusion-webui', desc:'Stable Diffusion web UI for image generation', url:'https://github.com/AUTOMATIC1111/stable-diffusion-webui', stars:150000 },
+    { name:'langgenius/dify', desc:'Open-source LLM app development platform', url:'https://github.com/langgenius/dify', stars:60000 },
+    { name:'sgl-project/sglang', desc:'Fast serving framework for large language models', url:'https://github.com/sgl-project/sglang', stars:15000 },
+    { name:'vllm-project/vllm', desc:'High-throughput and memory-efficient LLM inference', url:'https://github.com/vllm-project/vllm', stars:45000 },
+  ];
+  return repos.map((r, i) => ({ id:'fb-'+i, ...r }));
+}
+function nextProject() {
+  // Mix: 60% real AI repos, 20% quotes, 20% news-style
+  const roll = Math.random();
+  if (roll < 0.15 && projectCache.length >= collected.length + 1) {
+    // Return an AI quote as content
+    const q = AI_QUOTES[Math.floor(Math.random() * AI_QUOTES.length)];
+    return {
+      id: 'quote-' + Math.random(),
+      name: '💭 AI 哲思',
+      desc: q.text,
+      url: '#',
+      stars: 0,
+      isQuote: true,
+      author: q.author
+    };
+  }
+  if (projectCache.length === 0) {
+    const q = AI_QUOTES[Math.floor(Math.random() * AI_QUOTES.length)];
+    return { id:'q', name:'AI Wisdom', desc:q.text, url:'#', stars:0, isQuote:true, author:q.author };
+  }
+  const avail = projectCache.filter(p => !collected.includes(p.id));
+  if (avail.length === 0) return projectCache[Math.floor(Math.random() * projectCache.length)];
+  return avail[Math.floor(Math.random() * avail.length)];
+}
+
+// ─── Dock / Collect ───
+function dock(project) {
+  state = S.DOCK;
+  pendingProject = project;
+  rocket.docking = true;
+  const pos = getPlanetPos(targetPlanetIdx);
+  rocket.tx = pos.x; rocket.ty = pos.y; rocket.ta = planets[targetPlanetIdx].angle;
+
+  // Show modal
+  document.getElementById('pName').textContent = project.name;
+  document.getElementById('pDesc').textContent = project.desc;
+  document.getElementById('pStars').textContent = project.isQuote
+    ? '— ' + (project.author || '')
+    : '⭐ ' + fmtStars(project.stars);
+  document.getElementById('pLink').href = project.url;
+  document.getElementById('pLink').textContent = project.isQuote ? '' : '查看项目 →';
+  document.getElementById('pLink').style.display = project.isQuote ? 'none' : 'inline-block';
+  document.getElementById('modalTitle').textContent = project.isQuote ? '💡 智慧之光' : '🎯 对接成功！';
+  modal.classList.add('show');
+
+  // Spark particles
+  for (let i = 0; i < 30; i++) {
+    const a = (i / 30) * Math.PI * 2;
+    particles.push({
+      x: rocket.x, y: rocket.y,
+      vx: Math.cos(a) * (30 + Math.random() * 50),
+      vy: Math.sin(a) * (30 + Math.random() * 50),
+      life: 1.2, ml: 1.2, size: 1.5 + Math.random() * 3, type: 'spark'
+    });
+  }
+}
+function collect() {
+  if (!pendingProject) return;
+  state = S.COLLECTED;
+  collected.push(targetPlanetIdx);
+  planets[targetPlanetIdx].lit = true;
+
+  // Record docked position for permanent glow
+  const pos = getPlanetPos(targetPlanetIdx);
+  dockedSlots.push({ x: pos.x, y: pos.y, glow: 1, planetIdx: targetPlanetIdx });
+
+  pendingProject = null;
+  modal.classList.remove('show');
+  updateHUD();
+
+  // Light-up particles
+  for (let i = 0; i < 25; i++) {
+    const a = (i / 25) * Math.PI * 2;
+    particles.push({
+      x: rocket.x, y: rocket.y,
+      vx: Math.cos(a) * 25, vy: Math.sin(a) * 25 - 8,
+      life: 1.8, ml: 1.8, size: 2 + Math.random() * 4, type: 'glow'
+    });
+  }
+
+  if (collected.length >= planets.length) {
+    setTimeout(() => { state = S.COMPLETE; showComplete(); }, 1800);
+  }
+}
+function fmtStars(n) {
+  if (n >= 100000) return Math.floor(n / 1000) + 'k';
+  if (n >= 10000) return (n / 1000).toFixed(1) + 'k';
+  return String(n);
+}
+
+// ─── Complete / Warp ───
+function showComplete() {
+  sysEmojiEl.textContent = '🚀';
+  sysNameEl.textContent = systemData.name + ' ✓';
+  sysDescEl.textContent = '所有行星已点亮 · 自然选择号就绪';
+  const hint = sysIdx < SOLAR_SYSTEMS.length - 1
+    ? '下一个星系：' + SOLAR_SYSTEMS[(sysIdx + 1) % SOLAR_SYSTEMS.length].name
+    : '探索完成！循环至第一个星系';
+  startScreen.querySelector('p:last-child').innerHTML = `<kbd>SPACE</kbd> <span style="color:#888;font-size:0.8rem">${hint}</span>`;
+  startScreen.classList.remove('hidden');
+}
+function warp() {
+  state = S.WARP;
+  warpP = 0;
+  startScreen.classList.add('hidden');
+}
+
 // ─── Update ───
-function update(dt){
-  const g=GALAXIES[galaxyIdx];
-  galaxyAngle+=g.spin*dt;
+function update(dt) {
+  // Update planet angles
+  for (const p of planets) {
+    // Normalize period: Earth period = 2 seconds for gameplay
+    const baseSpeed = (2 * Math.PI) / (2.0); // one orbit per 2 seconds for Earth
+    p.angle += baseSpeed * (1.0 / p.period) * dt;
+  }
 
-  if(state===STATE.PLAY){
-    if(keys['ArrowUp']) rocket.speed=Math.min(rocket.speed+200*dt,350);
-    if(keys['ArrowDown']) rocket.speed=Math.max(rocket.speed-220*dt,40);
-    if(keys['ArrowLeft']) rocket.angle-=3*dt;
-    if(keys['ArrowRight']) rocket.angle+=3*dt;
-    rocket.angle=Math.max(-Math.PI*0.85,Math.min(-Math.PI*0.15,rocket.angle));
-    rocket.x+=Math.cos(rocket.angle)*rocket.speed*dt;
-    rocket.y+=Math.sin(rocket.angle)*rocket.speed*dt;
-    if(rocket.x<-30)rocket.x=W+30;if(rocket.x>W+30)rocket.x=-30;
-    if(rocket.y<-60)rocket.y=H+60;if(rocket.y>H+60)rocket.y=-60;
+  // Docked slot glow decay
+  for (const ds of dockedSlots) {
+    ds.glow = Math.max(0.4, ds.glow - dt * 0.1);
+  }
 
-    // Fire
-    if(Math.random()<0.5){
-      particles.push({x:rocket.x,y:rocket.y+22,vx:Math.cos(rocket.angle+Math.PI+(Math.random()-0.5)*0.3)*(20+Math.random()*50),vy:Math.sin(rocket.angle+Math.PI+(Math.random()-0.5)*0.3)*(20+Math.random()*50),life:0.4+Math.random()*0.3,ml:0.7,size:1+Math.random()*2.5,type:'fire'});
+  if (state === S.PLAY) {
+    // Controls
+    if (keys['ArrowUp']) rocket.speed = Math.min(rocket.speed + 180 * dt, 360);
+    if (keys['ArrowDown']) rocket.speed = Math.max(rocket.speed - 200 * dt, 25);
+    if (keys['ArrowLeft']) rocket.angle -= 3.2 * dt;
+    if (keys['ArrowRight']) rocket.angle += 3.2 * dt;
+    rocket.angle = Math.max(-Math.PI * 0.9, Math.min(-Math.PI * 0.1, rocket.angle));
+
+    rocket.x += Math.cos(rocket.angle) * rocket.speed * dt;
+    rocket.y += Math.sin(rocket.angle) * rocket.speed * dt;
+
+    // Wrap
+    if (rocket.x < -40) rocket.x = W + 40;
+    if (rocket.x > W + 40) rocket.x = -40;
+    if (rocket.y < -80) rocket.y = H + 80;
+    if (rocket.y > H + 80) rocket.y = -80;
+
+    // Fire trail
+    if (Math.random() < 0.55) {
+      particles.push({
+        x: rocket.x, y: rocket.y + 20,
+        vx: Math.cos(rocket.angle + Math.PI + (Math.random() - 0.5) * 0.25) * (15 + Math.random() * 45),
+        vy: Math.sin(rocket.angle + Math.PI + (Math.random() - 0.5) * 0.25) * (15 + Math.random() * 45),
+        life: 0.35 + Math.random() * 0.3, ml: 0.65, size: 1 + Math.random() * 2.5, type: 'fire'
+      });
     }
 
-    // Collision
-    if(!rocket.docked){
-      const slot=getSlot();
-      const dist=Math.hypot(rocket.x-slot.x,rocket.y-slot.y);
-      if(dist<28) dock(nextProject());
-    }
+    // Collision with target planet
+    const tpos = getPlanetPos(targetPlanetIdx);
+    const dist = Math.hypot(rocket.x - tpos.x, rocket.y - tpos.y);
+    if (dist < 32) dock(nextProject());
   }
 
-  if(state===STATE.SUCCESS&&rocket.docked){
-    rocket.x+=(rocket.tx-rocket.x)*5*dt;
-    rocket.y+=(rocket.ty-rocket.y)*5*dt;
-    rocket.angle+=(rocket.ta-rocket.angle)*5*dt;
+  if (state === S.DOCK && rocket.docking) {
+    rocket.x += (rocket.tx - rocket.x) * 5 * dt;
+    rocket.y += (rocket.ty - rocket.y) * 5 * dt;
+    rocket.angle += (rocket.ta - rocket.angle) * 5 * dt;
   }
 
-  // Particles
-  for(let i=particles.length-1;i>=0;i--){
-    const p=particles[i];
-    p.life-=dt;
-    if(p.life<=0){particles.splice(i,1);continue}
-    p.x+=p.vx*dt;p.y+=p.vy*dt;
-    p.vx*=0.97;p.vy*=0.97;
+  // Update particles
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.life -= dt;
+    if (p.life <= 0) { particles.splice(i, 1); continue; }
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    p.vx *= 0.96; p.vy *= 0.96;
   }
+
+  // Limit particles
+  if (particles.length > 400) particles.splice(0, particles.length - 400);
 
   // HUD fade
-  if(hudAlpha>0) hudAlpha-=dt/3;
+  if (hudAlpha > 0) hudAlpha -= dt / 2.5;
 
   // Warp
-  if(state===STATE.WARP){
-    warpP=Math.min(warpP+dt/5,1);
-    if(warpP>=1){
-      galaxyIdx=(galaxyIdx+1)%GALAXIES.length;
-      loadGalaxy();
-      state=STATE.START;
+  if (state === S.WARP) {
+    warpP = Math.min(warpP + dt / 4.5, 1);
+    if (warpP >= 1) {
+      sysIdx = (sysIdx + 1) % SOLAR_SYSTEMS.length;
+      loadSystem();
+      state = S.START;
     }
   }
 }
 
 // ─── Draw ───
-function draw(){
-  ctx.clearRect(0,0,W,H);
+function draw() {
+  ctx.clearRect(0, 0, W, H);
 
-  // Background - paper texture feel
-  ctx.fillStyle='#f5f5f0';
-  ctx.fillRect(0,0,W,H);
+  // Background
+  ctx.fillStyle = '#151515';
+  ctx.fillRect(0, 0, W, H);
 
-  // Stars (drawn as tiny crosses for sketch feel)
-  for(const s of stars){
-    const tw=0.5+0.5*Math.sin(time*s.s+s.o);
-    const a=s.a*(0.5+0.5*tw);
-    const moveY=Math.sin(time*0.3+stars.indexOf(s))*0.3;
-    const sy=s.y+moveY;
+  // Stars
+  for (const s of bgStars) {
+    const sx = s.x * W, sy = s.y * H;
+    const tw = 0.5 + 0.5 * Math.sin(time * s.s + s.o);
+    const a = s.a * (0.5 + 0.5 * tw);
 
-    ctx.strokeStyle=`rgba(80,80,80,${a})`;
-    ctx.lineWidth=s.r*0.5;
-    ctx.beginPath();
-    // Tiny cross
-    const sz=s.r*1.5;
-    ctx.moveTo(s.x-sz,sy);ctx.lineTo(s.x+sz,sy);
-    ctx.moveTo(s.x,sy-sz);ctx.lineTo(s.x,sy+sz);
-    ctx.stroke();
+    ctx.fillStyle = `rgba(255,255,255,${a})`;
+    // Tiny cross for distant stars
+    if (s.r < 0.8) {
+      ctx.fillRect(sx, sy, dpr < 2 ? 1 : 0.6, dpr < 2 ? 1 : 0.6);
+    } else {
+      ctx.beginPath();
+      ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 
-  // Galaxy
-  drawGalaxy();
+  // Draw solar system
+  drawSolarSystem();
 
-  // Rocket
-  if(state!==STATE.WARP) drawRocket();
+  // Docked glow positions (permanent)
+  for (const ds of dockedSlots) {
+    const pulse = 0.5 + 0.5 * Math.sin(time * 3 + ds.planetIdx);
+    const alpha = ds.glow * (0.5 + 0.3 * pulse);
+    // Outer halo
+    const grad = ctx.createRadialGradient(ds.x, ds.y, 0, ds.x, ds.y, 22);
+    grad.addColorStop(0, `rgba(255,255,255,${alpha})`);
+    grad.addColorStop(0.5, `rgba(255,255,255,${alpha * 0.3})`);
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(ds.x, ds.y, 22, 0, Math.PI * 2); ctx.fill();
+
+    // Bright center
+    ctx.fillStyle = `rgba(255,255,255,${alpha * 1.2})`;
+    ctx.beginPath(); ctx.arc(ds.x, ds.y, 4 + pulse * 2, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Rocket (not during warp)
+  if (state !== S.WARP) drawRocket();
 
   // Particles
-  for(const p of particles){
-    const a=p.life/p.ml;
-    if(p.type==='fire'){
-      ctx.fillStyle=`rgba(40,40,40,${a})`;
-    }else if(p.type==='spark'){
-      ctx.fillStyle=`rgba(20,20,20,${a})`;
-    }else{
-      ctx.fillStyle=`rgba(60,60,60,${a*0.6})`;
+  for (const p of particles) {
+    const a = p.life / p.ml;
+    if (p.type === 'fire') {
+      ctx.fillStyle = `rgba(180,180,180,${a})`;
+    } else if (p.type === 'spark') {
+      ctx.fillStyle = `rgba(220,220,220,${a})`;
+    } else {
+      ctx.fillStyle = `rgba(255,255,255,${a * 0.7})`;
+      ctx.shadowColor = `rgba(255,255,255,${a * 0.3})`;
+      ctx.shadowBlur = 6;
     }
     ctx.beginPath();
-    ctx.arc(p.x,p.y,p.size*a,0,Math.PI*2);
+    ctx.arc(p.x, p.y, p.size * a, 0, Math.PI * 2);
     ctx.fill();
   }
+  ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
 
-  // Warp effect
-  if(state===STATE.WARP) drawWarp();
+  // HUD hints
+  if (state === S.PLAY && hudAlpha > 0) {
+    ctx.fillStyle = `rgba(180,180,180,${Math.min(hudAlpha * 0.4, 0.5)})`;
+    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('↑↓ speed  ←→ steer  R reset', W / 2, H - 20);
+  }
+  if (state === S.START) {
+    const pulse = 0.5 + 0.5 * Math.sin(time * 2);
+    ctx.fillStyle = `rgba(200,200,200,${0.25 + pulse * 0.25})`;
+    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('按 SPACE 发射', W / 2, H - 20);
+  }
 
-  // HUD hint
-  if(state===STATE.PLAY&&hudAlpha>0){
-    ctx.fillStyle=`rgba(100,100,100,${Math.min(hudAlpha,0.6)})`;
-    ctx.font='11px "PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.textAlign='center';
-    ctx.fillText('↑↓ speed  ←→ steer  R reset',W/2,H-30);
-  }
-  if(state===STATE.START){
-    const pulse=0.5+0.5*Math.sin(time*2);
-    ctx.fillStyle=`rgba(80,80,80,${0.3+pulse*0.3})`;
-    ctx.font='11px "PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.textAlign='center';
-    ctx.fillText('按 SPACE 发射',W/2,H-30);
-  }
+  // Warp
+  if (state === S.WARP) drawWarp();
 }
 
-function drawGalaxy(){
-  const g=GALAXIES[galaxyIdx];
-  const cx=400,cy=130;
+function drawSolarSystem() {
+  const cx = W / 2;
+  const cy = H * 0.42;
+  const maxDist = Math.min(W, H) * 0.38;
+  const maxDataDist = systemData.planets[systemData.planets.length - 1].dist;
 
-  // Outer glow - soft pencil-like
-  for(let i=3;i>=1;i--){
-    const r=g.orbit*1.3+i*20;
-    const grad=ctx.createRadialGradient(cx,cy,10,cx,cy,r);
-    grad.addColorStop(0,'rgba(40,40,40,0.12)');
-    grad.addColorStop(0.6,'rgba(60,60,60,0.05)');
-    grad.addColorStop(1,'transparent');
-    ctx.fillStyle=grad;
-    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
-  }
+  // Sun
+  const sunGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 26);
+  sunGrad.addColorStop(0, '#fff');
+  sunGrad.addColorStop(0.3, '#eee');
+  sunGrad.addColorStop(0.7, '#555');
+  sunGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = sunGrad;
+  ctx.beginPath(); ctx.arc(cx, cy, 26, 0, Math.PI * 2); ctx.fill();
 
-  // Orbit ring - dashed hand-drawn feel
-  ctx.save();
-  ctx.translate(cx,cy);
-  ctx.rotate(galaxyAngle);
-  ctx.setLineDash([4,6]);
-  ctx.strokeStyle='rgba(60,60,60,0.3)';
-  ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.arc(0,0,g.orbit,0,Math.PI*2);ctx.stroke();
-  ctx.setLineDash([]);
+  // Sun core
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI * 2); ctx.fill();
 
-  // Spiral arms - sketchy
-  for(let a=0;a<4;a++){
-    const base=(a/4)*Math.PI*2;
-    ctx.strokeStyle='rgba(50,50,50,0.15)';
-    ctx.lineWidth=6+a;
-    ctx.beginPath();
-    for(let r=14;r<g.orbit*1.2;r+=3){
-      const sa=base+r*0.035;
-      const sx=Math.cos(sa)*r,sy=Math.sin(sa)*r;
-      r===14?ctx.moveTo(sx,sy):ctx.lineTo(sx,sy);
+  // Orbit lines and planets
+  for (let i = 0; i < planets.length; i++) {
+    const p = planets[i];
+    const orbitR = (p.dist / maxDataDist) * maxDist * 0.85;
+
+    // Orbit ring
+    ctx.strokeStyle = p.lit ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = p.lit ? 1.5 : 0.8;
+    ctx.setLineDash(p.lit ? [] : [3, 8]);
+    ctx.beginPath(); ctx.arc(cx, cy, orbitR, 0, Math.PI * 2); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Planet position
+    const px = cx + Math.cos(p.angle) * orbitR;
+    const py = cy + Math.sin(p.angle) * orbitR;
+
+    // Planet body
+    if (p.lit) {
+      // Lit: bright with glow
+      const pGrad = ctx.createRadialGradient(px, py, 0, px, py, p.size * 2.5);
+      pGrad.addColorStop(0, '#fff');
+      pGrad.addColorStop(0.4, '#ddd');
+      pGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = pGrad;
+      ctx.beginPath(); ctx.arc(px, py, p.size * 2.5, 0, Math.PI * 2); ctx.fill();
     }
+
+    // Planet solid
+    ctx.fillStyle = p.lit ? '#fff' : p.color;
+    ctx.strokeStyle = p.lit ? '#fff' : 'rgba(255,255,255,0.4)';
+    ctx.lineWidth = p.lit ? 2 : 1;
+    ctx.beginPath(); ctx.arc(px, py, p.size, 0, Math.PI * 2); ctx.fill();
     ctx.stroke();
+
+    // Target indicator on current target
+    if (i === targetPlanetIdx && state === S.PLAY && !p.lit) {
+      const pulse = 0.6 + 0.4 * Math.sin(time * 4);
+      ctx.strokeStyle = `rgba(255,255,255,${pulse})`;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.arc(px, py, p.size + 10, 0, Math.PI * 2); ctx.stroke();
+
+      // Small arrows around target
+      for (let a = 0; a < 4; a++) {
+        const aa = time * 2 + a * Math.PI / 2;
+        const ax = px + Math.cos(aa) * (p.size + 16);
+        const ay = py + Math.sin(aa) * (p.size + 16);
+        ctx.fillStyle = `rgba(255,255,255,${pulse})`;
+        ctx.beginPath(); ctx.arc(ax, ay, 2.5, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    // Planet name label
+    if (p.lit || i === targetPlanetIdx) {
+      ctx.fillStyle = p.lit ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)';
+      ctx.font = `${p.lit ? 11 : 10}px "PingFang SC","Microsoft YaHei",sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(p.emoji + ' ' + p.name, px, py - p.size - 10);
+    }
   }
-  ctx.restore();
-
-  // Core
-  ctx.fillStyle='#111';
-  ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#fff';
-  ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fill();
-
-  // Target slot
-  const slot=getSlot();
-  const pulse=0.6+0.4*Math.sin(time*3);
-  // Outer ring
-  ctx.strokeStyle=`rgba(0,0,0,${pulse})`;
-  ctx.lineWidth=2.5;
-  ctx.beginPath();ctx.arc(slot.x,slot.y,20,0,Math.PI*2);ctx.stroke();
-  // Inner ring
-  ctx.setLineDash([2,2]);
-  ctx.strokeStyle=`rgba(0,0,0,${pulse*0.6})`;
-  ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.arc(slot.x,slot.y,14,0,Math.PI*2);ctx.stroke();
-  ctx.setLineDash([]);
-  // Arrow
-  ctx.save();
-  ctx.translate(slot.x,slot.y);
-  ctx.rotate(slot.angle);
-  ctx.fillStyle=`rgba(0,0,0,${pulse})`;
-  ctx.beginPath();
-  ctx.moveTo(18,0);ctx.lineTo(10,-4);ctx.lineTo(10,4);ctx.closePath();
-  ctx.fill();
-  ctx.restore();
 }
 
-function drawRocket(){
+function drawRocket() {
   ctx.save();
-  const sway=state===STATE.START?Math.sin(performance.now()/1000*1.5)*3:0;
-  ctx.translate(rocket.x,rocket.y+sway);
-  ctx.rotate(rocket.angle+Math.PI/2);
+  const sway = state === S.START ? Math.sin(performance.now() / 1000 * 1.5) * 4 : 0;
+  ctx.translate(rocket.x, rocket.y + sway);
+  ctx.rotate(rocket.angle + Math.PI / 2);
 
-  if(rocket.lit){
-    ctx.shadowColor='rgba(0,0,0,0.3)';
-    ctx.shadowBlur=12;
+  const w = 24, h = 42, r = 12;
+
+  if (rocket.lit) {
+    ctx.shadowColor = 'rgba(255,255,255,0.5)';
+    ctx.shadowBlur = 14;
   }
 
-  // Body - pill shape
-  const w=28,h=48,r=14;
-  ctx.fillStyle='#fff';
-  ctx.strokeStyle='#111';
-  ctx.lineWidth=2.5;
+  // Main body
+  ctx.fillStyle = '#1e1e1e';
+  ctx.strokeStyle = '#ddd';
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(0,-h/2+r,r,Math.PI,0,false);
-  ctx.lineTo(w/2,h/2-r);
-  ctx.arc(0,h/2-r,r,0,Math.PI,false);
-  ctx.lineTo(-w/2,-h/2+r);
+  ctx.arc(0, -h / 2 + r, r, Math.PI, 0, false);
+  ctx.lineTo(w / 2, h / 2 - r);
+  ctx.arc(0, h / 2 - r, r, 0, Math.PI, false);
+  ctx.lineTo(-w / 2, -h / 2 + r);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
 
-  // Nose cone - dark
-  ctx.fillStyle='#111';
+  // Nose
+  ctx.fillStyle = '#333';
+  ctx.strokeStyle = '#ddd';
   ctx.beginPath();
-  ctx.arc(0,-h/2+r,r*0.6,Math.PI,0,false);
-  ctx.fill();
-
-  // Stripe
-  ctx.fillStyle='#111';
-  ctx.fillRect(-w/2,-3,w,6);
-
-  // Window
-  ctx.fillStyle='#fff';
-  ctx.strokeStyle='#111';
-  ctx.lineWidth=2;
-  ctx.beginPath();
-  ctx.arc(0,-13,7,0,Math.PI*2);
+  ctx.arc(0, -h / 2 + r, r * 0.55, Math.PI, 0, false);
   ctx.fill();
   ctx.stroke();
-  // Window shine
-  ctx.fillStyle='#fff';
+
+  // Stripe
+  ctx.fillStyle = '#555';
+  ctx.fillRect(-w / 2, -2, w, 4);
+
+  // Window
+  ctx.fillStyle = '#1e1e1e';
+  ctx.strokeStyle = '#ddd';
+  ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.arc(-2,-15,2.5,0,Math.PI*2);
+  ctx.arc(0, -11, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(-1.5, -13, 2, 0, Math.PI * 2);
   ctx.fill();
 
   // Fins
-  ctx.fillStyle='#111';
+  ctx.fillStyle = '#333';
+  ctx.strokeStyle = '#ddd';
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(-w/2+2,h/2-12);ctx.lineTo(-w/2-10,h/2+6);ctx.lineTo(-w/2+6,h/2-2);ctx.closePath();
+  ctx.moveTo(-w / 2 + 2, h / 2 - 14);
+  ctx.lineTo(-w / 2 - 8, h / 2 + 5);
+  ctx.lineTo(-w / 2 + 6, h / 2 - 4);
+  ctx.closePath();
   ctx.fill();
+  ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(w/2-2,h/2-12);ctx.lineTo(w/2+10,h/2+6);ctx.lineTo(w/2-6,h/2-2);ctx.closePath();
+  ctx.moveTo(w / 2 - 2, h / 2 - 14);
+  ctx.lineTo(w / 2 + 8, h / 2 + 5);
+  ctx.lineTo(w / 2 - 6, h / 2 - 4);
+  ctx.closePath();
   ctx.fill();
+  ctx.stroke();
 
   // Engine
-  ctx.fillStyle='#333';
+  ctx.fillStyle = '#111';
+  ctx.strokeStyle = '#888';
   ctx.beginPath();
-  ctx.moveTo(-4,h/2-r+2);ctx.lineTo(-7,h/2+3);ctx.lineTo(7,h/2+3);ctx.lineTo(4,h/2-r+2);ctx.closePath();
+  ctx.moveTo(-3, h / 2 - r + 2);
+  ctx.lineTo(-5, h / 2 + 2);
+  ctx.lineTo(5, h / 2 + 2);
+  ctx.lineTo(3, h / 2 - r + 2);
+  ctx.closePath();
   ctx.fill();
+  ctx.stroke();
 
-  // Cute face
-  ctx.strokeStyle='#111';
-  ctx.lineWidth=1.5;
-  // Eyes
-  ctx.fillStyle='#111';
-  ctx.beginPath();ctx.arc(-4,-6,2.5,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.arc(4,-6,2.5,0,Math.PI*2);ctx.fill();
-  // Eye highlights
-  ctx.fillStyle='#fff';
-  ctx.beginPath();ctx.arc(-3,-7,1,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.arc(5,-7,1,0,Math.PI*2);ctx.fill();
+  // Face
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(-3.5, -4, 2.2, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(3.5, -4, 2.2, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#111';
+  ctx.beginPath(); ctx.arc(-3.5, -4, 1.1, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(3.5, -4, 1.1, 0, Math.PI * 2); ctx.fill();
   // Mouth
-  ctx.beginPath();ctx.arc(0,-3,2.5,0.2,Math.PI-0.2);ctx.stroke();
+  ctx.strokeStyle = '#ddd';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.arc(0, -1, 2.2, 0.2, Math.PI - 0.2); ctx.stroke();
   // Blush
-  ctx.fillStyle='rgba(0,0,0,0.1)';
-  ctx.beginPath();ctx.ellipse(-8,0,3,2,0,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.ellipse(8,0,3,2,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.beginPath(); ctx.ellipse(-7, 0, 2.5, 1.8, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(7, 0, 2.5, 1.8, 0, 0, Math.PI * 2); ctx.fill();
 
-  ctx.shadowColor='transparent';
-  ctx.shadowBlur=0;
+  ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
   ctx.restore();
 }
 
-function drawWarp(){
-  const p=warpP;
-  ctx.fillStyle=`rgba(245,245,240,${p<0.4?p/0.4*0.8:0.8})`;
-  ctx.fillRect(0,0,W,H);
+function drawWarp() {
+  const p = warpP;
+  ctx.fillStyle = `rgba(20,20,20,${p < 0.4 ? p / 0.4 * 0.85 : 0.85})`;
+  ctx.fillRect(0, 0, W, H);
 
-  if(p<0.45){
-    // Hyperspace lines
-    const stretch=p/0.45*500;
-    for(let i=0;i<100;i++){
-      const x=Math.random()*W,y=Math.random()*H;
-      ctx.strokeStyle=`rgba(40,40,40,${0.3+Math.random()*0.5})`;
-      ctx.lineWidth=0.5+Math.random()*1.5;
+  if (p < 0.4) {
+    const stretch = p / 0.4 * Math.max(W, H);
+    for (let i = 0; i < 120; i++) {
+      const x = Math.random() * W, y = Math.random() * H;
+      ctx.strokeStyle = `rgba(200,200,200,${0.2 + Math.random() * 0.5})`;
+      ctx.lineWidth = 0.3 + Math.random() * 1.2;
       ctx.beginPath();
-      ctx.moveTo(x,y);ctx.lineTo(x+(Math.random()-0.5)*stretch,y-stretch*0.7);
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + (Math.random() - 0.5) * stretch, y - stretch * 0.7);
       ctx.stroke();
     }
-  }else if(p<0.7){
-    // Ship
-    const sp=(p-0.45)/0.25;
-    const sx=W/2,sy=H/2+Math.sin(sp*Math.PI)*40;
-    ctx.save();ctx.translate(sx,sy);
-    ctx.scale(1+sp*0.2,1+sp*0.2);
-    ctx.fillStyle='#111';
+  } else if (p < 0.65) {
+    const sp = (p - 0.4) / 0.25;
+    const sx = W / 2, sy = H / 2 + Math.sin(sp * Math.PI) * 30;
+    ctx.save(); ctx.translate(sx, sy);
+    ctx.scale(1 + sp * 0.15, 1 + sp * 0.15);
+    ctx.fillStyle = '#1a1a1a';
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(0,-50);ctx.lineTo(35,25);ctx.lineTo(12,18);
-    ctx.lineTo(8,35);ctx.lineTo(-8,35);ctx.lineTo(-12,18);
-    ctx.lineTo(-35,25);ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle='#fff';
-    ctx.strokeStyle='#111';
-    ctx.lineWidth=1.5;
-    ctx.beginPath();ctx.ellipse(0,-10,8,14,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.moveTo(0, -45); ctx.lineTo(30, 20); ctx.lineTo(10, 14);
+    ctx.lineTo(6, 30); ctx.lineTo(-6, 30); ctx.lineTo(-10, 14);
+    ctx.lineTo(-30, 20); ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#1a1a1a';
+    ctx.beginPath(); ctx.ellipse(0, -8, 6, 11, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     ctx.restore();
-    // Label
-    ctx.fillStyle='#111';
-    ctx.font='bold 14px "PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.textAlign='center';
-    ctx.fillText('自然选择号',sx,sy-80);
-  }else{
-    // Arriving
-    const g=GALAXIES[(galaxyIdx+1)%GALAXIES.length];
-    ctx.fillStyle='#111';
-    ctx.font='bold 18px "PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.textAlign='center';
-    ctx.fillText(g.emoji+' '+g.name,W/2,H/2-20);
-    ctx.fillStyle='#555';
-    ctx.font='13px "PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.fillText(g.desc,W/2,H/2+20);
+    ctx.fillStyle = '#ddd';
+    ctx.font = 'bold 13px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('自然选择号', sx, sy - 72);
+  } else {
+    const ns = SOLAR_SYSTEMS[(sysIdx + 1) % SOLAR_SYSTEMS.length];
+    ctx.fillStyle = '#ddd';
+    ctx.font = 'bold 16px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(ns.emoji + ' ' + ns.name, W / 2, H / 2 - 16);
+    ctx.fillStyle = '#999';
+    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(ns.desc, W / 2, H / 2 + 16);
   }
 }
 
-// ─── Loop ───
-function loop(ts){
-  const dt=lastTime?Math.min((ts-lastTime)/1000,0.05):0.016;
-  lastTime=ts;time+=dt;
+// ─── Game Loop ───
+function loop(ts) {
+  const dt = lastTime ? Math.min((ts - lastTime) / 1000, 0.05) : 0.016;
+  lastTime = ts; time += dt;
   update(dt);
   draw();
   requestAnimationFrame(loop);
 }
 
 // ─── Boot ───
-loadGalaxy();
+loadSystem();
 requestAnimationFrame(loop);
 </script>
 </body>
