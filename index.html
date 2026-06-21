@@ -164,13 +164,13 @@ const AI_QUOTES = [
 
 // ─── Planet color by temperature ───
 function planetColors(temp) {
-  // Unlit = dark gray, lit = vivid temperature-based colors
+  // Unlit = dark, lit = BRIGHT temperature colors
   switch (temp) {
-    case 'hot':  return { body:'#3a3a3a', glow:'#ff4422', litBody:'#ff5533', name:'🔥 红热行星', info:'表面温度极高，炽热的岩石世界' };
-    case 'warm': return { body:'#3a3a3a', glow:'#ff8800', litBody:'#ff9933', name:'🌤 温暖行星', info:'温度适中，可能适宜生命存在' };
-    case 'cool': return { body:'#3a3a3a', glow:'#3399ee', litBody:'#55aaff', name:'❄ 凉爽行星', info:'表面较冷，大气层较厚的气态或冰质行星' };
-    case 'cold': return { body:'#3a3a3a', glow:'#2266ee', litBody:'#4488ff', name:'🧊 冰冷行星', info:'表面极寒，遥远的冰冻世界' };
-    default:     return { body:'#3a3a3a', glow:'#999', litBody:'#bbb', name:'未知', info:'' };
+    case 'hot':  return { body:'#222', glow:'#ff2200', lit:'#ff4400', name:'🔥 红热行星' };
+    case 'warm': return { body:'#222', glow:'#ff9900', lit:'#ffbb00', name:'🌤 温暖行星' };
+    case 'cool': return { body:'#222', glow:'#2299ff', lit:'#44bbff', name:'❄ 凉爽行星' };
+    case 'cold': return { body:'#222', glow:'#3366ff', lit:'#6699ff', name:'🧊 冰冷行星' };
+    default:     return { body:'#222', glow:'#999', lit:'#bbb', name:'未知' };
   }
 }
 
@@ -234,14 +234,10 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Space') {
     e.preventDefault();
     if (state === S.START) launch();
+    else if (state === S.DOCK) resumeAfterDock();
     else if (state === S.COMPLETE) warp();
   }
   if (e.code === 'KeyR' && state === S.PLAY) respawn();
-  // Arrow key resumes from dock
-  if (state === S.DOCK && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) {
-    e.preventDefault();
-    resumeAfterDock();
-  }
 });
 window.addEventListener('keyup', e => { keys[e.code] = false; });
 
@@ -252,8 +248,7 @@ window.addEventListener('keyup', e => { keys[e.code] = false; });
     if(el){
       el.addEventListener('touchstart',e=>{
         e.preventDefault();
-        if (state === S.DOCK) resumeAfterDock();
-        else keys[arr[i+1]]=true;
+        keys[arr[i+1]]=true;
       });
       el.addEventListener('touchend',e=>{e.preventDefault();keys[arr[i+1]]=false});
     }
@@ -262,6 +257,7 @@ window.addEventListener('keyup', e => { keys[e.code] = false; });
 document.getElementById('tbLaunch')?.addEventListener('touchstart', e => {
   e.preventDefault();
   if (state === S.START) launch();
+  else if (state === S.DOCK) resumeAfterDock();
   else if (state === S.COMPLETE) warp();
 });
 
@@ -589,7 +585,7 @@ function draw() {
     ctx.fillStyle = `rgba(200,200,200,${0.35+pulse*0.25})`;
     ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('按方向键继续飞行', W/2, H-18);
+    ctx.fillText('按 SPACE 继续飞行', W/2, H-18);
   }
 
   if (state === S.WARP) drawWarp();
@@ -630,23 +626,43 @@ function drawSolarSystem() {
     const py = cy + Math.sin(p.angle) * orbitR;
     const colors = planetColors(p.temp);
 
-    // Lit planet glow
+    // Lit planet - huge bright glow
     if (p.lit) {
-      const glowSize = p.size * 3.5;
-      const pGrad = ctx.createRadialGradient(px, py, 0, px, py, glowSize);
-      pGrad.addColorStop(0, colors.glow);
-      pGrad.addColorStop(0.4, colors.glow.replace(')', ',0.5)').replace('rgb', 'rgba'));
-      pGrad.addColorStop(1, 'transparent');
-      ctx.fillStyle = pGrad;
-      ctx.beginPath(); ctx.arc(px, py, glowSize, 0, Math.PI*2); ctx.fill();
+      // Outer glow halo
+      const haloSize = p.size * 5;
+      const halo = ctx.createRadialGradient(px, py, p.size*0.3, px, py, haloSize);
+      // Convert hex glow to rgba for gradient
+      const r = parseInt(colors.glow.slice(1,3),16);
+      const g = parseInt(colors.glow.slice(3,5),16);
+      const b = parseInt(colors.glow.slice(5,7),16);
+      halo.addColorStop(0, `rgba(${r},${g},${b},1)`);
+      halo.addColorStop(0.25, `rgba(${r},${g},${b},0.7)`);
+      halo.addColorStop(0.5, `rgba(${r},${g},${b},0.2)`);
+      halo.addColorStop(1, 'transparent');
+      ctx.fillStyle = halo;
+      ctx.beginPath(); ctx.arc(px, py, haloSize, 0, Math.PI*2); ctx.fill();
+
+      // Inner white-hot core
+      const core = ctx.createRadialGradient(px, py, 0, px, py, p.size*1.3);
+      const lr = parseInt(colors.lit.slice(1,3),16);
+      const lg = parseInt(colors.lit.slice(3,5),16);
+      const lb = parseInt(colors.lit.slice(5,7),16);
+      core.addColorStop(0, '#ffffff');
+      core.addColorStop(0.3, `rgba(${lr},${lg},${lb},1)`);
+      core.addColorStop(1, 'transparent');
+      ctx.fillStyle = core;
+      ctx.beginPath(); ctx.arc(px, py, p.size*1.3, 0, Math.PI*2); ctx.fill();
     }
 
     // Planet body
-    ctx.fillStyle = p.lit ? colors.litBody : colors.body;
-    ctx.strokeStyle = p.lit ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)';
-    ctx.lineWidth = p.lit ? 1.8 : 1;
+    ctx.fillStyle = p.lit ? colors.lit : colors.body;
+    ctx.strokeStyle = p.lit ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = p.lit ? 2 : 1;
+    ctx.shadowColor = p.lit ? colors.glow : 'transparent';
+    ctx.shadowBlur = p.lit ? 8 : 0;
     ctx.beginPath(); ctx.arc(px, py, p.size, 0, Math.PI*2); ctx.fill();
     ctx.stroke();
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
 
     // Target indicator
     if (i === targetPlanetIdx && state === S.PLAY && !p.lit) {
