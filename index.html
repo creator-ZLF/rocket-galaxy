@@ -12,14 +12,16 @@ canvas{display:block;position:fixed;top:0;left:0}
 
 .start-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;pointer-events:auto;z-index:20;transition:opacity 0.35s}
 .start-overlay.hidden{opacity:0;pointer-events:none}
-.start-card{background:rgba(15,15,20,0.95);border:1.5px solid rgba(255,255,255,0.15);border-radius:18px;padding:28px 40px;text-align:center;max-width:400px;backdrop-filter:blur(10px)}
-.start-card .emoji{font-size:3rem;display:block;margin-bottom:8px}
-.start-card h1{font-size:1.4rem;color:#eee;margin-bottom:4px;letter-spacing:2px;font-weight:400}
-.start-card .sub{font-size:0.78rem;color:#888;margin-bottom:10px;line-height:1.4}
-.start-card .progress-row{display:flex;gap:5px;justify-content:center;margin:8px 0}
-.start-card .pdot{width:7px;height:7px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);transition:all 0.4s}
-.start-card .pdot.done{background:#ffd700;border-color:#ffd700;box-shadow:0 0 6px rgba(255,215,0,0.6)}
-.start-card kbd{display:inline-block;padding:3px 10px;background:rgba(255,255,255,0.08);color:#ccc;border:1px solid rgba(255,255,255,0.2);border-radius:4px;font-size:0.82em}
+.start-card{background:rgba(12,12,18,0.96);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:36px 44px;text-align:center;max-width:440px;backdrop-filter:blur(12px)}
+.start-card .galaxy-num{font-size:0.7rem;color:rgba(255,255,255,0.3);letter-spacing:4px;text-transform:uppercase;margin-bottom:8px}
+.start-card h1{font-size:1.6rem;color:#eee;margin-bottom:12px;letter-spacing:3px;font-weight:300}
+.start-card .galaxy-desc{font-size:0.82rem;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:14px;font-style:italic}
+.start-card .progress-row{display:flex;gap:5px;justify-content:center;margin:10px 0}
+.start-card .pdot{width:7px;height:7px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);transition:all 0.4s}
+.start-card .pdot.done{background:#ffd700;border-color:#ffd700;box-shadow:0 0 8px rgba(255,215,0,0.5)}
+.start-card .launch-hint{margin-top:14px}
+.start-card kbd{display:inline-block;padding:4px 14px;background:rgba(255,255,255,0.06);color:#aaa;border:1px solid rgba(255,255,255,0.15);border-radius:5px;font-size:0.8em;letter-spacing:1px}
+.start-card .launch-hint span{color:rgba(255,255,255,0.4);font-size:0.78rem;margin-left:4px}
 
 .toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:40;opacity:0;transition:all 0.5s}
 .toast.show{opacity:1}
@@ -56,11 +58,11 @@ canvas{display:block;position:fixed;top:0;left:0}
 <div id="ui">
   <div class="start-overlay" id="startScreen">
     <div class="start-card">
-      <span class="emoji" id="sysEmoji">☀️</span>
+      <p class="galaxy-num" id="galaxyNum">#1</p>
       <h1 id="sysName">太阳系</h1>
-      <p class="sub" id="sysDesc">我们的家园 · 8颗行星</p>
+      <p class="galaxy-desc" id="sysDesc">在无垠的黑暗中，一颗恒星点燃了八簇星火。</p>
       <div class="progress-row" id="progressDots"></div>
-      <p style="margin-top:8px"><kbd>SPACE</kbd> <span style="color:#888;font-size:0.78rem">发射火箭</span></p>
+      <p class="launch-hint"><kbd>SPACE</kbd> <span>发射</span></p>
     </div>
   </div>
 
@@ -97,7 +99,7 @@ let W, H, dpr;
 // ─── Solar Systems with rich planet data ───
 const SOLAR_SYSTEMS = [
   {
-    name: '太阳系', emoji: '☀️', desc: '我们的家园 · 1颗恒星 · 8颗行星',
+    name: '太阳系', emoji:'☀️', desc: '在无垠的黑暗中，一颗恒星点燃了八簇星火。这是我们旅程的起点，也是所有故事的摇篮。从这里出发，你将驶向群星。',
     planets: [
       { name:'水星', emoji:'☿', dist:0.39, period:0.24, size:5, temp:'hot', info:'水星是太阳系中最小的行星，也是距离太阳最近的行星。它的表面布满了撞击坑，看起来很像月球。由于没有大气层保护，水星表面昼夜温差极为剧烈——白天可达430°C，夜晚则骤降至-180°C。水星绕太阳一周仅需88天，但自转一周却需要59天。有趣的是，水星每自转三圈恰好绕太阳两圈，形成了一种独特的3:2轨道共振。NASA的信使号探测器曾绕水星飞行四年，发现水星极地陨石坑深处可能存在水冰。' },
       { name:'金星', emoji:'♀', dist:0.72, period:0.62, size:7, temp:'hot', info:'金星是太阳系中最亮的行星，被称为"启明星"或"长庚星"。它的大小和质量与地球相近，常被称为地球的"姐妹行星"。金星被一层厚厚的二氧化碳大气包裹，表面大气压是地球的92倍，相当于地球海洋深处900米的压力。浓厚的温室效应使金星表面温度高达465°C——比最靠近太阳的水星还热。金星的自转方向与大多数行星相反（逆行自转），也就是说在金星上太阳从西边升起。前苏联的金星探测器曾成功着陆并传回了金星表面的图像，但只坚持了不到两小时就被高温和高压摧毁。' },
@@ -110,7 +112,7 @@ const SOLAR_SYSTEMS = [
     ]
   },
   {
-    name: '比邻星系', emoji: '⭐', desc: '距地球4.2光年 · 三星系统',
+    name: '比邻星系', emoji:'⭐', desc: '四光年的距离，在宇宙的尺度上只是一步之遥。三颗恒星在引力中舞蹈，行星在暗处低语——也许，那里也有眼睛在回望我们。',
     planets: [
       { name:'比邻b', emoji:'🪐', dist:0.35, period:0.30, size:5, temp:'warm', info:'比邻星b是一颗位于比邻星宜居带内的类地行星，质量约为地球的1.2倍。它距离我们仅4.2光年，是已知距离地球最近的系外行星。比邻星b绕其主星运行一周仅需11.2天，但由于比邻星是一颗红矮星，辐射出的能量远小于太阳，因此比邻星b的表面温度可能刚好适合液态水的存在。不过，红矮星频繁的耀斑活动可能已经剥离了行星的大气层，这使得它的宜居性仍然存在争议。如果人类有朝一日能够向其他恒星系统发射探测器，比邻星b无疑将是首选目标。' },
       { name:'比邻c', emoji:'🪐', dist:0.65, period:0.70, size:6, temp:'cool', info:'比邻星c是一颗超级地球，质量约为地球的7倍，在距离比邻星约1.5天文单位的轨道上运行。这颗行星于2019年通过径向速度法发现，其轨道周期约为5.2年。由于距离主星较远，其表面温度极低，可能被冰层覆盖。比邻星c的发现表明，即使是距离我们最近的恒星系统，也可能拥有一个复杂的多行星架构。它的存在挑战了我们对红矮星周围行星形成的理论模型。' },
@@ -120,7 +122,7 @@ const SOLAR_SYSTEMS = [
     ]
   },
   {
-    name: 'TRAPPIST-1', emoji: '💫', desc: '7颗类地行星 · 距地球40光年',
+    name: 'TRAPPIST-1', emoji:'💫', desc: '四十光年外，七颗地球的姐妹在暗红太阳的注视下旋转。它们靠得如此之近，以至于站在一颗上，可以看见邻星在天空中缓缓升起——如同巨大的月亮，讲述着近在咫尺却永不相触的故事。',
     planets: [
       { name:'TRAPPIST-1b', emoji:'🪐', dist:0.25, period:0.25, size:5, temp:'hot', info:'TRAPPIST-1b是该系统最内层的岩石行星，被潮汐锁定——总是一面永远朝向它的恒星。这种锁定意味着它的一面是永恒的炽热白昼，另一面则是永夜。虽然其密度与地球相近，但其表面温度极高，不太可能适宜生命存在。科学家通过韦伯太空望远镜的观测发现，这颗行星很可能没有大气层，表面类似于水星——只是一个裸露的岩石球体。' },
       { name:'TRAPPIST-1c', emoji:'🪐', dist:0.40, period:0.50, size:5, temp:'hot', info:'TRAPPIST-1c的密度与地球非常相似，这暗示它可能拥有类似的岩石组成。科学家曾猜测它可能有一个稠密的二氧化碳大气层，但韦伯望远镜的最新观测表明它可能也是裸露的岩石行星。即使没有大气层，它的存在仍然具有重大意义——它证明了小型红矮星周围可以形成与地球密度相似的岩石行星，这对于寻找类地行星来说是一个重要的发现。' },
@@ -132,7 +134,7 @@ const SOLAR_SYSTEMS = [
     ]
   },
   {
-    name: 'Kepler-22', emoji: '🔭', desc: '首个确认的宜居带行星 · 距地球638光年',
+    name: 'Kepler-22', emoji:'🔭', desc: '六百三十八光年外，一颗行星静静地漂浮在黄金地带。开普勒的凝视穿越了时空，捕捉到了它微弱的身影。它像一面遥远的镜子，映照出地球可能的模样——孤独，却充满希望。',
     planets: [
       { name:'Kepler-22b', emoji:'🌍', dist:1.00, period:1.10, size:8, temp:'warm', info:'Kepler-22b是NASA开普勒任务确认的首颗位于类太阳恒星宜居带内的系外行星。它的半径约为地球的2.4倍，是一颗"超级地球"。虽然其确切组成尚不清楚（可能是岩石行星、海洋行星或气态行星），但其表面温度适中，约22°C——像地球春天的温度。这颗行星绕其主星运行一周约290天，与地球的轨道周期非常接近。Kepler-22b的发现标志着人类寻找"第二个地球"的旅程迈出了重要一步。' },
       { name:'Kepler-22c', emoji:'🪐', dist:2.00, period:4.00, size:10, temp:'cool', info:'Kepler-22c是该系统的外层行星，一颗质量约为地球8倍的超级地球或迷你海王星。它距离主星较远，表面寒冷，可能拥有厚厚的大气层。天文学家认为它可能保留了大量的原始氢氦大气，类似于我们太阳系中的冰巨星。它的存在表明Kepler-22系统可能比最初发现的更为复杂。' },
@@ -140,7 +142,7 @@ const SOLAR_SYSTEMS = [
     ]
   },
   {
-    name: 'Gliese 581', emoji: '⭐', desc: '著名的红矮星系统 · 距地球20光年',
+    name: 'Gliese 581', emoji:'⭐', desc: '二十光年外的红矮星，用微弱的火焰温暖着它的行星家族。这里曾是人类寻找第二地球的最初希望，争议与梦想交织——科学在怀疑中前行，而星辰依旧沉默地燃烧。',
     planets: [
       { name:'Gliese 581b', emoji:'🪐', dist:0.30, period:0.30, size:8, temp:'hot', info:'Gliese 581b是一颗质量约为地球16倍的热海王星，非常靠近其主星。它的表面温度极高，不可能存在液态水。这颗行星虽然不适宜生命，但它的发现开启了Gliese 581系统的探索之门，随后天文学家又在该系统中发现了多颗行星。' },
       { name:'Gliese 581c', emoji:'🪐', dist:0.60, period:0.70, size:5, temp:'warm', info:'Gliese 581c曾被誉为"第一颗可能宜居的系外行星"，虽然后续研究表明它可能太热而无法维持液态水。它的质量约为地球的5倍，是一颗岩石超级地球。尽管宜居性存疑，它的发现激发了人们对系外行星宜居性的广泛讨论和研究。' },
@@ -149,7 +151,7 @@ const SOLAR_SYSTEMS = [
     ]
   },
   {
-    name: 'HD 10180', emoji: '💫', desc: '最丰富的系外行星系统之一 · 距地球127光年',
+    name: 'HD 10180', emoji:'💫', desc: '一百二十七光年外，六颗行星在引力编织的精密网络中运转。这是宇宙赠予我们最丰饶的行星系统之一——仿佛大自然在说：看，恒星孕育行星，不是偶然，而是常态。',
     planets: [
       { name:'HD 10180c', emoji:'🪐', dist:0.30, period:0.30, size:8, temp:'hot', info:'HD 10180c是一颗热海王星，质量约为地球的13倍。它在极近的轨道上绕其主星运行，表面温度极高。这颗行星是HD 10180系统中已确认的六颗行星之一，该系统是已知拥有最多行星的系外行星系统之一。' },
       { name:'HD 10180d', emoji:'🪐', dist:0.60, period:0.70, size:7, temp:'hot', info:'HD 10180d质量约为地球的12倍，位于系统的内部区域。虽然温度很高，但它的密度暗示它可能是一颗岩石核心加厚大气层的行星。这个系统紧凑的架构表明，行星形成过程可以在相对狭小的空间内创造多个天体。' },
@@ -160,7 +162,7 @@ const SOLAR_SYSTEMS = [
     ]
   },
   {
-    name: 'Kepler-90', emoji: '🔭', desc: '类似太阳系的八行星系统 · 距地球2545光年',
+    name: 'Kepler-90', emoji:'🔭', desc: '两千五百光年外，八颗行星排列成与太阳系惊人相似的图谱。而发现最后一颗的，不是人类的眼睛，而是机器——AI在数据海洋中捕捉到了一颗新世界。这是人类与机器共同书写的星图。',
     planets: [
       { name:'Kepler-90b', emoji:'🪐', dist:0.25, period:0.25, size:5, temp:'hot', info:'Kepler-90b是该系统中最靠近主星的行星，轨道周期仅约7天。它的表面温度极高，是一颗岩石超级地球。Kepler-90系统因其八颗行星的排列与太阳系惊人地相似而闻名。' },
       { name:'Kepler-90c', emoji:'🪐', dist:0.45, period:0.50, size:6, temp:'hot', info:'Kepler-90c是该系统中第二颗行星，轨道周期约9天。它比地球大约30%，是一颗炽热的岩石行星。整个Kepler-90系统的紧凑结构使所有八颗行星的轨道都比地球绕太阳的轨道更靠近主星。' },
@@ -172,7 +174,7 @@ const SOLAR_SYSTEMS = [
     ]
   },
   {
-    name: 'TOI-700', emoji: '🌟', desc: '拥有类地宜居行星 · 距地球101光年',
+    name: 'TOI-700', emoji:'🌟', desc: '一百零一光年外，TESS卫星发现了一颗温和的恒星与它的四颗行星。其中最珍贵的两颗，落在生命可能存在的温度区间——宇宙中，也许还有另一个蓝色的黎明。',
     planets: [
       { name:'TOI-700b', emoji:'🪐', dist:0.30, period:0.30, size:5, temp:'hot', info:'TOI-700b是该系统中最内层的岩石行星，几乎与地球大小相同。由于距离主星非常近，它被潮汐锁定，表面温度很高。它的发现来自NASA的TESS任务，该任务专门搜索近距离的系外行星。' },
       { name:'TOI-700c', emoji:'🪐', dist:0.60, period:0.70, size:8, temp:'warm', info:'TOI-700c是一颗介于地球和海王星之间的行星，大小约为地球的2.6倍。它可能拥有稠密的大气层。这颗行星虽然不在宜居带内，但为了解TOI-700系统的整体架构提供了关键信息。' },
@@ -181,14 +183,14 @@ const SOLAR_SYSTEMS = [
     ]
   },
   {
-    name: 'K2-18', emoji: '🌊', desc: '大气含水的超级地球 · 距地球124光年',
+    name: 'K2-18', emoji:'🌊', desc: '一百二十四光年外，一颗海洋行星漂浮在星辰之间。它的大气中检测到了水蒸气——这是人类首次在宜居带行星上找到水的痕迹。也许在那无尽的海洋深处，有什么正在游动。',
     planets: [
       { name:'K2-18b', emoji:'🪐', dist:0.60, period:0.60, size:9, temp:'warm', info:'K2-18b是一颗超级地球，大小约为地球的2.6倍，质量约为8.6倍。2019年，天文学家在其大气中检测到了水蒸气——这是人类首次在宜居带系外行星的大气中发现水。更令人振奋的是，后续观测还发现了二甲基硫醚的迹象，这种物质在地球上主要由海洋生物产生。K2-18b可能是一个水世界，表面被广阔的海洋覆盖。它是目前已知最有可能存在外星生命的行星之一。' },
       { name:'K2-18c', emoji:'🪐', dist:1.40, period:2.50, size:6, temp:'cool', info:'K2-18c是K2-18系统中较远的行星，一颗质量约为地球5.6倍的迷你海王星或岩石超级地球。它的轨道周期约33天，距离主星适中。虽然不在宜居带核心区域，但科学家们仍在密切研究它的组成和大气特征，以了解K2-18系统的整体演化历史。' },
     ]
   },
   {
-    name: 'LHS 1140', emoji: '🌍', desc: '最有望的宜居岩石行星 · 距地球41光年',
+    name: 'LHS 1140', emoji:'🌍', desc: '四十一光年外，一颗致密的岩石行星在宁静的M矮星旁缓缓旋转。韦伯望远镜的凝视穿透了它的大气，发现了氮和可能的生命信号。这是宇宙给我们的最高奖赏——一个真正可能孕育生命的岩石世界，就在星际邻居的门槛上。',
     planets: [
       { name:'LHS 1140b', emoji:'🌍', dist:0.80, period:0.80, size:6, temp:'warm', info:'LHS 1140b是一颗岩石超级地球，大小约为地球的1.4倍，质量高达6.6倍——这确认了它是一颗致密的岩石行星而非气态行星。它位于其主星的宜居带内，接收到的恒星能量适中。韦伯太空望远镜的观测表明，它可能拥有一个主要由氮气组成的大气层，类似于地球。它的大气可能含有水蒸气和二氧化碳的迹象，令它成为太阳系外搜寻生命最有希望的目标之一。它的主星LHS 1140是一颗安静的M矮星，不像其他红矮星那样剧烈活动，这给了它的行星一个相对温和的环境。' },
       { name:'LHS 1140c', emoji:'🪐', dist:1.60, period:2.50, size:5, temp:'cool', info:'LHS 1140c是一颗位于系统外缘的较小行星。它的质量约为地球的1.8倍，轨道周期约14天。虽然它可能过于寒冷而不宜生存，但它的存在表明LHS 1140是一个多行星系统，进一步的研究可能揭示更多关于这颗主星周围行星形成的信息。' },
@@ -261,8 +263,8 @@ let maxLives = 0;
 const startScreen = document.getElementById('startScreen');
 const toast = document.getElementById('toast');
 const sysNameEl = document.getElementById('sysName');
-const sysEmojiEl = document.getElementById('sysEmoji');
 const sysDescEl = document.getElementById('sysDesc');
+const galaxyNumEl = document.getElementById('galaxyNum');
 const progressDotsEl = document.getElementById('progressDots');
 const hudNameEl = document.getElementById('hudName');
 const litDotsEl = document.getElementById('litDots');
@@ -363,8 +365,10 @@ function updateHUD() {
 
 function updateStartScreen() {
   sysNameEl.textContent = systemData.name;
-  sysEmojiEl.textContent = systemData.emoji;
-  sysDescEl.textContent = systemData.desc + ' · ❤' + lives + ' lives';
+  galaxyNumEl.textContent = '#' + (sysIdx + 1);
+  sysDescEl.textContent = systemData.desc;
+  // Show lives in the launch hint
+  document.querySelector('.launch-hint span').textContent = '发射 · ❤' + lives;
   let dots = '';
   for (let i = 0; i < planets.length; i++) {
     dots += `<span class="pdot${collected.includes(i) ? ' done' : ''}"></span>`;
@@ -394,7 +398,7 @@ function launch() {
   state = S.PLAY;
   startScreen.classList.add('hidden');
   toast.classList.remove('show');
-  rocket.speed = 130;
+  rocket.speed = 80 + sysIdx * 15;
   rocket.angle = -Math.PI / 2;
   rocket.docking = false;
   rocket.x = W / 2;
@@ -414,7 +418,7 @@ function respawn() {
   }
   rocket.x = W / 2;
   rocket.y = H * 0.88;
-  rocket.speed = 130;
+  rocket.speed = 80 + sysIdx * 15;
   rocket.angle = -Math.PI / 2;
   rocket.docking = false;
   rocket.px = rocket.x;
@@ -459,7 +463,7 @@ function resumeAfterDock() {
   }
   // One press: dismiss card and resume flying
   state = S.PLAY;
-  rocket.speed = 130;
+  rocket.speed = 80 + sysIdx * 15;
   rocket.angle = -Math.PI / 2;
   rocket.docking = false;
   rocket.px = rocket.x;
@@ -536,11 +540,11 @@ function dock() {
 
 // ─── Complete / Warp ───
 function showComplete() {
-  sysEmojiEl.textContent = '🚀';
   sysNameEl.textContent = systemData.name + ' ✓';
-  sysDescEl.textContent = '所有行星已点亮 · 剩余❤' + lives + ' · 自然选择号就绪';
+  galaxyNumEl.textContent = '#' + (sysIdx + 1);
+  sysDescEl.textContent = '所有行星已被点亮。自然选择号引擎就绪。';
   const nextSys = SOLAR_SYSTEMS[(sysIdx + 1) % SOLAR_SYSTEMS.length];
-  document.querySelector('.start-card p:last-child').innerHTML = `<kbd>SPACE</kbd> <span style="color:#888;font-size:0.78rem">启程前往 ${nextSys.name}</span>`;
+  document.querySelector('.launch-hint span').textContent = '启程 · ' + nextSys.name + ' · ❤' + lives;
   updateStartScreen();
   startScreen.classList.remove('hidden');
 }
@@ -566,12 +570,15 @@ function update(dt) {
     rocket.px = rocket.x;
     rocket.py = rocket.y;
 
-    // Controls - faster and harder
+    // Controls - speed only increases, base speed grows per galaxy
+    const minSpeed = 80 + sysIdx * 15; // galaxy 1: 80, galaxy 2: 95, ..., galaxy 10: 215
     if (keys['ArrowUp']) rocket.speed = Math.min(rocket.speed + 250 * dt, 450);
-    if (keys['ArrowDown']) rocket.speed = Math.max(rocket.speed - 280 * dt, 30);
+    // ArrowDown disabled — speed can only go up in this galaxy
     if (keys['ArrowLeft']) rocket.angle -= 3.8 * dt;
     if (keys['ArrowRight']) rocket.angle += 3.8 * dt;
     rocket.angle = Math.max(-Math.PI * 0.85, Math.min(-Math.PI * 0.15, rocket.angle));
+    // Maintain minimum speed for this galaxy
+    if (rocket.speed < minSpeed) rocket.speed = minSpeed;
 
     rocket.x += Math.cos(rocket.angle) * rocket.speed * dt;
     rocket.y += Math.sin(rocket.angle) * rocket.speed * dt;
@@ -678,7 +685,7 @@ function draw() {
     ctx.font = '11px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'center';
     const livesStr = lives <= 3 ? ' ⚠' + lives + '⚠' : ' ❤' + lives;
-    ctx.fillText('↑↓ speed  ←→ steer  R reset' + livesStr, W/2, H-18);
+    ctx.fillText('↑ speed  ←→ steer  R reset' + livesStr, W/2, H-18);
   }
   if (state === S.START) {
     const pulse = 0.5+0.5*Math.sin(time*2);
@@ -913,9 +920,9 @@ function drawWarp() {
     ctx.fillStyle = '#ddd';
     ctx.font = 'bold 16px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(ns.emoji+' '+ns.name, W/2, H/2-16);
-    ctx.fillStyle = '#999';
-    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillText(ns.name, W/2, H/2-16);
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = 'italic 12px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.fillText(ns.desc, W/2, H/2+16);
   }
 }
