@@ -156,11 +156,11 @@ const AI_QUOTES = [
 // ─── Planet color by temperature ───
 function planetColors(temp) {
   switch (temp) {
-    case 'hot':  return { body:'#ff6644', glow:'#ff4422', name:'红热行星', bright:'#ff9977' };
-    case 'warm': return { body:'#ffaa33', glow:'#ff8800', name:'温暖行星', bright:'#ffcc66' };
-    case 'cool': return { body:'#66bbff', glow:'#3399dd', name:'凉爽行星', bright:'#99ddff' };
-    case 'cold': return { body:'#4488ff', glow:'#2266ee', name:'冰冷行星', bright:'#77aaff' };
-    default:     return { body:'#aaa', glow:'#888', name:'未知', bright:'#ccc' };
+    case 'hot':  return { body:'#ff9988', glow:'#ff5533', name:'红热行星', bright:'#ffccbb' };
+    case 'warm': return { body:'#ffcc66', glow:'#ff9922', name:'温暖行星', bright:'#ffdd99' };
+    case 'cool': return { body:'#88ccff', glow:'#4499ee', name:'凉爽行星', bright:'#bbddff' };
+    case 'cold': return { body:'#6699ff', glow:'#3366ee', name:'冰冷行星', bright:'#99bbff' };
+    default:     return { body:'#bbb', glow:'#999', name:'未知', bright:'#ddd' };
   }
 }
 
@@ -182,7 +182,7 @@ let shownIds = new Set(); // global dedup
 let fetched = false;
 let warpP = 0;
 let hudAlpha = 3;
-let dockedSlots = [];
+let dockCooldown = 0; // prevent collision spam
 let toastTimer = null;
 
 // ─── DOM ───
@@ -259,7 +259,6 @@ function loadSystem() {
   }));
   targetPlanetIdx = findNextTarget();
   collected = [];
-  dockedSlots = [];
   fetched = false;
   projectCache = [];
   updateHUD();
@@ -446,7 +445,7 @@ function dock() {
   // Light up the planet
   planet.lit = true;
   collected.push(targetPlanetIdx);
-  dockedSlots.push({ x: pos.x, y: pos.y, glow: 1.5, color: colors.glow, planetIdx: targetPlanetIdx });
+  dockCooldown = 1.0; // 1 second cooldown
 
   // Get content
   const project = nextProject();
@@ -517,31 +516,6 @@ function warp() {
   startScreen.classList.add('hidden');
 }
 
-// ─── Collision Detection ───
-// Uses swept-circle test to prevent tunneling at high speeds
-function checkCollision(rx, ry, rpx, rpy, tpos, threshold) {
-  // Circle-circle static test first
-  const dist = Math.hypot(rx - tpos.x, ry - tpos.y);
-  if (dist <= threshold) return true;
-
-  // Swept test: check if the line segment from previous pos crosses near the target
-  const dx = rx - rpx;
-  const dy = ry - rpy;
-  const segLen = Math.hypot(dx, dy);
-  if (segLen < 0.1) return false; // stationary
-
-  // Find closest point on segment to target
-  const fx = tpos.x - rpx;
-  const fy = tpos.y - rpy;
-  let t = (fx * dx + fy * dy) / (segLen * segLen);
-  t = Math.max(0, Math.min(1, t));
-  const closestX = rpx + t * dx;
-  const closestY = rpy + t * dy;
-  const closestDist = Math.hypot(tpos.x - closestX, tpos.y - closestY);
-
-  return closestDist <= threshold * 1.1; // slightly more forgiving for swept
-}
-
 // ─── Update ───
 function update(dt) {
   // Planet orbits
@@ -550,10 +524,8 @@ function update(dt) {
     p.angle += baseSpeed * (1.0 / p.period) * dt;
   }
 
-  // Docked slot glow decay (very slow — stays bright)
-  for (const ds of dockedSlots) {
-    ds.glow = Math.max(0.8, ds.glow - dt * 0.05);
-  }
+  // Cooldown
+  if (dockCooldown > 0) dockCooldown -= dt;
 
   if (state === S.PLAY) {
     // Save previous position for swept collision
@@ -586,10 +558,17 @@ function update(dt) {
       });
     }
 
-    // Collision with target planet (using swept test)
-    const tpos = getPlanetPos(targetPlanetIdx);
-    if (!planets[targetPlanetIdx].lit && checkCollision(rocket.x, rocket.y, rocket.px, rocket.py, tpos, 30)) {
-      dock();
+    // Collision: simple distance check with cooldown
+    if (dockCooldown <= 0) {
+      const tgt = planets[targetPlanetIdx];
+      if (tgt && !tgt.lit) {
+        const tpos = getPlanetPos(targetPlanetIdx);
+        const dist = Math.hypot(rocket.x - tpos.x, rocket.y - tpos.y);
+        const threshold = tgt.size + 20; // scales with planet size
+        if (dist < threshold) {
+          dock();
+        }
+      }
     }
   }
 
@@ -640,22 +619,6 @@ function draw() {
   }
 
   drawSolarSystem();
-
-  // Docked glow spots (very bright)
-  for (const ds of dockedSlots) {
-    const pulse = 0.5 + 0.5 * Math.sin(time * 3.5 + ds.planetIdx);
-    const alpha = ds.glow * (0.7 + 0.3 * pulse);
-    // Large halo
-    const grad = ctx.createRadialGradient(ds.x, ds.y, 0, ds.x, ds.y, 28);
-    grad.addColorStop(0, ds.color.replace(')', `,${alpha})`).replace('rgb', 'rgba'));
-    grad.addColorStop(0.4, ds.color.replace(')', `,${alpha * 0.5})`).replace('rgb', 'rgba'));
-    grad.addColorStop(1, 'transparent');
-    ctx.fillStyle = grad;
-    ctx.beginPath(); ctx.arc(ds.x, ds.y, 28, 0, Math.PI * 2); ctx.fill();
-    // Bright center
-    ctx.fillStyle = `rgba(255,255,255,${alpha * 1.1})`;
-    ctx.beginPath(); ctx.arc(ds.x, ds.y, 5 + pulse * 3, 0, Math.PI * 2); ctx.fill();
-  }
 
   if (state !== S.WARP) drawRocket();
 
@@ -734,9 +697,18 @@ function drawSolarSystem() {
     const py = cy + Math.sin(p.angle) * orbitR;
     const colors = planetColors(p.temp);
 
-    // Lit planet glow
+    // Unlit planet subtle glow (so they're visible)
+    if (!p.lit) {
+      const uGlow = ctx.createRadialGradient(px, py, 0, px, py, p.size * 1.8);
+      uGlow.addColorStop(0, colors.body.replace(')', ',0.3)').replace('rgb', 'rgba'));
+      uGlow.addColorStop(1, 'transparent');
+      ctx.fillStyle = uGlow;
+      ctx.beginPath(); ctx.arc(px, py, p.size * 1.8, 0, Math.PI*2); ctx.fill();
+    }
+
+    // Lit planet glow (much brighter)
     if (p.lit) {
-      const glowSize = p.size * 3;
+      const glowSize = p.size * 3.5;
       const pGrad = ctx.createRadialGradient(px, py, 0, px, py, glowSize);
       const glowColor = colors.glow;
       pGrad.addColorStop(0, glowColor);
@@ -748,8 +720,8 @@ function drawSolarSystem() {
 
     // Planet body
     ctx.fillStyle = p.lit ? colors.bright : colors.body;
-    ctx.strokeStyle = p.lit ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.25)';
-    ctx.lineWidth = p.lit ? 1.8 : 0.8;
+    ctx.strokeStyle = p.lit ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.4)';
+    ctx.lineWidth = p.lit ? 1.8 : 1.2;
     ctx.beginPath(); ctx.arc(px, py, p.size, 0, Math.PI*2); ctx.fill();
     ctx.stroke();
 
@@ -770,12 +742,13 @@ function drawSolarSystem() {
       }
     }
 
-    // Name label
-    if (p.lit || (i === targetPlanetIdx && state === S.PLAY)) {
-      ctx.fillStyle = p.lit ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.45)';
-      ctx.font = `${p.lit ? 11 : 10}px "PingFang SC","Microsoft YaHei",sans-serif`;
+    // Name label — show for all unlit, bold for lit
+    const showName = !p.lit || (i === targetPlanetIdx && state === S.PLAY);
+    if (showName || p.lit) {
+      ctx.fillStyle = p.lit ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.5)';
+      ctx.font = `${p.lit ? 11 : 9}px "PingFang SC","Microsoft YaHei",sans-serif`;
       ctx.textAlign = 'center';
-      ctx.fillText(p.emoji + ' ' + p.name, px, py - p.size - 10);
+      ctx.fillText(p.lit ? p.emoji+' '+p.name : p.name, px, py - p.size - 10);
     }
   }
 }
