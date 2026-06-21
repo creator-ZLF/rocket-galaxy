@@ -13,12 +13,17 @@ canvas{display:block;position:fixed;top:0;left:0}
 .start-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;pointer-events:auto;z-index:20;transition:opacity 0.35s}
 .start-overlay.hidden{opacity:0;pointer-events:none}
 .start-card{background:rgba(12,12,18,0.96);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:36px 44px;text-align:center;max-width:440px;backdrop-filter:blur(12px)}
-.start-card .galaxy-num{font-size:0.7rem;color:rgba(255,255,255,0.3);letter-spacing:4px;text-transform:uppercase;margin-bottom:8px}
 .start-card h1{font-size:1.6rem;color:#eee;margin-bottom:12px;letter-spacing:3px;font-weight:300}
 .start-card .galaxy-desc{font-size:0.82rem;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:14px;font-style:italic}
 .start-card .progress-row{display:flex;gap:5px;justify-content:center;margin:10px 0}
 .start-card .pdot{width:7px;height:7px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);transition:all 0.4s}
 .start-card .pdot.done{background:#ffd700;border-color:#ffd700;box-shadow:0 0 8px rgba(255,215,0,0.5)}
+.start-card .sc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.start-card .sc-num{font-size:0.65rem;color:rgba(255,255,255,0.25);letter-spacing:4px;text-transform:uppercase}
+.start-card .sc-lives{font-size:0.7rem;color:rgba(255,255,255,0.4)}
+.start-card .sc-stats{display:flex;gap:16px;justify-content:center;margin:10px 0;font-size:0.7rem;color:rgba(255,255,255,0.3)}
+.start-card .sc-rules{margin:10px 0;text-align:left;font-size:0.67rem;color:rgba(255,255,255,0.25);line-height:1.6;padding:0 10px}
+.start-card .sc-rules p{margin:1px 0}
 .start-card .launch-hint{margin-top:14px}
 .start-card kbd{display:inline-block;padding:4px 14px;background:rgba(255,255,255,0.06);color:#aaa;border:1px solid rgba(255,255,255,0.15);border-radius:5px;font-size:0.8em;letter-spacing:1px}
 .start-card .launch-hint span{color:rgba(255,255,255,0.4);font-size:0.78rem;margin-left:4px}
@@ -58,10 +63,23 @@ canvas{display:block;position:fixed;top:0;left:0}
 <div id="ui">
   <div class="start-overlay" id="startScreen">
     <div class="start-card">
-      <p class="galaxy-num" id="galaxyNum">#1</p>
+      <div class="sc-top">
+        <span class="sc-num" id="galaxyNum">#1</span>
+        <span class="sc-lives" id="scLives">❤18</span>
+      </div>
       <h1 id="sysName">太阳系</h1>
-      <p class="galaxy-desc" id="sysDesc">在无垠的黑暗中，一颗恒星点燃了八簇星火。</p>
+      <p class="galaxy-desc" id="sysDesc">在无垠的黑暗中，一颗恒星点燃了八簇星火。这是我们旅程的起点，也是所有故事的摇篮。</p>
+      <div class="sc-stats" id="scStats">
+        <span>🪐 8 planets</span>
+        <span>⚡ min speed 80</span>
+        <span>⚠ R to reset</span>
+      </div>
       <div class="progress-row" id="progressDots"></div>
+      <div class="sc-rules">
+        <p>▸ 飞出顶部边界 — 失去生命</p>
+        <p>▸ 误撞其他行星 — 失去生命</p>
+        <p>▸ 按R重置 — 失去生命</p>
+      </div>
       <p class="launch-hint"><kbd>SPACE</kbd> <span>发射</span></p>
     </div>
   </div>
@@ -367,8 +385,14 @@ function updateStartScreen() {
   sysNameEl.textContent = systemData.name;
   galaxyNumEl.textContent = '#' + (sysIdx + 1);
   sysDescEl.textContent = systemData.desc;
-  // Show lives in the launch hint
-  document.querySelector('.launch-hint span').textContent = '发射 · ❤' + lives;
+  document.getElementById('scLives').textContent = '❤' + lives;
+  // Stats line
+  document.getElementById('scStats').innerHTML = `
+    <span>🪐 ${planets.length} planets</span>
+    <span>⚡ min ${80 + sysIdx * 15} px/s</span>
+    <span>⚠ speed ↑ only</span>
+  `;
+  document.querySelector('.launch-hint span').textContent = '发射';
   let dots = '';
   for (let i = 0; i < planets.length; i++) {
     dots += `<span class="pdot${collected.includes(i) ? ' done' : ''}"></span>`;
@@ -409,13 +433,26 @@ function launch() {
   lives = maxLives;
   updateHUD();
 }
-function respawn() {
+function loseLife(reason) {
   lives--;
   updateHUD();
+  // Show brief reason
+  document.getElementById('tQuote').textContent = reason;
+  document.getElementById('tAuthor').textContent = '❤' + lives + ' 剩余';
+  document.getElementById('tPlanetHeader').textContent = '';
+  document.getElementById('tPlanetInfo').textContent = '';
+  document.getElementById('tPlanetVisual').textContent = '';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1500);
+
   if (lives <= 0) {
     failGalaxy();
     return;
   }
+  respawnSimple();
+}
+
+function respawnSimple() {
   rocket.x = W / 2;
   rocket.y = H * 0.88;
   rocket.speed = 80 + sysIdx * 15;
@@ -423,6 +460,10 @@ function respawn() {
   rocket.docking = false;
   rocket.px = rocket.x;
   rocket.py = rocket.y;
+}
+
+function respawn() {
+  loseLife('手动重置');
 }
 
 function failGalaxy() {
@@ -543,8 +584,10 @@ function showComplete() {
   sysNameEl.textContent = systemData.name + ' ✓';
   galaxyNumEl.textContent = '#' + (sysIdx + 1);
   sysDescEl.textContent = '所有行星已被点亮。自然选择号引擎就绪。';
+  document.getElementById('scLives').textContent = '❤' + lives;
   const nextSys = SOLAR_SYSTEMS[(sysIdx + 1) % SOLAR_SYSTEMS.length];
-  document.querySelector('.launch-hint span').textContent = '启程 · ' + nextSys.name + ' · ❤' + lives;
+  document.querySelector('.launch-hint span').textContent = '启程 → ' + nextSys.name;
+  document.getElementById('scStats').innerHTML = '<span>✨ 完成！</span>';
   updateStartScreen();
   startScreen.classList.remove('hidden');
 }
@@ -583,11 +626,21 @@ function update(dt) {
     rocket.x += Math.cos(rocket.angle) * rocket.speed * dt;
     rocket.y += Math.sin(rocket.angle) * rocket.speed * dt;
 
-    // Wrap
+    // Wrap horizontal + bottom
     if (rocket.x < -40) rocket.x = W + 40;
     if (rocket.x > W + 40) rocket.x = -40;
-    if (rocket.y < -80) rocket.y = H + 80;
     if (rocket.y > H + 80) rocket.y = -80;
+    // Top edge = failure!
+    if (rocket.y < -80) { loseLife('飞出了星系边界！'); return; }
+
+    // Check collision with WRONG planets
+    for (let i = 0; i < planets.length; i++) {
+      if (i === targetPlanetIdx) continue;
+      if (planets[i].lit) continue;
+      const wpos = getPlanetPos(i);
+      const wdist = Math.hypot(rocket.x - wpos.x, rocket.y - wpos.y);
+      if (wdist < planets[i].size + 15) { loseLife('误撞 ' + planets[i].name + '！'); return; }
+    }
 
     // Fire trail
     if (Math.random() < 0.55) {
