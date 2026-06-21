@@ -6,39 +6,45 @@
 <title>🚀 星际对接 · Star Dock</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100vw;height:100vh;height:100dvh;overflow:hidden;background:#111}
+html,body{width:100vw;height:100vh;height:100dvh;overflow:hidden;background:#0a0a0f}
 canvas{display:block;position:fixed;top:0;left:0}
-#ui{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}
+#ui{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;font-family:"PingFang SC","Microsoft YaHei",sans-serif}
 
-.start-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;pointer-events:auto;z-index:20;transition:opacity 0.4s}
+.start-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;pointer-events:auto;z-index:20;transition:opacity 0.35s}
 .start-overlay.hidden{opacity:0;pointer-events:none}
-.start-card{background:#1a1a1a;border:2px solid #555;border-radius:20px;padding:32px 44px;text-align:center;max-width:400px}
-.start-card .emoji{font-size:3.5rem;display:block;margin-bottom:10px}
-.start-card h1{font-size:1.5rem;color:#eee;margin-bottom:6px;letter-spacing:3px;font-weight:400}
-.start-card .sub{font-size:0.8rem;color:#888;margin-bottom:14px;line-height:1.5}
-.start-card kbd{display:inline-block;padding:4px 12px;background:#333;color:#ddd;border:1px solid #555;border-radius:4px;font-size:0.85em}
+.start-card{background:rgba(15,15,20,0.95);border:1.5px solid rgba(255,255,255,0.15);border-radius:18px;padding:28px 40px;text-align:center;max-width:400px;backdrop-filter:blur(10px)}
+.start-card .emoji{font-size:3rem;display:block;margin-bottom:8px}
+.start-card h1{font-size:1.4rem;color:#eee;margin-bottom:4px;letter-spacing:2px;font-weight:400}
+.start-card .sub{font-size:0.78rem;color:#888;margin-bottom:10px;line-height:1.4}
+.start-card .progress-row{display:flex;gap:5px;justify-content:center;margin:8px 0}
+.start-card .pdot{width:7px;height:7px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);transition:all 0.4s}
+.start-card .pdot.done{background:#ffd700;border-color:#ffd700;box-shadow:0 0 6px rgba(255,215,0,0.6)}
+.start-card kbd{display:inline-block;padding:3px 10px;background:rgba(255,255,255,0.08);color:#ccc;border:1px solid rgba(255,255,255,0.2);border-radius:4px;font-size:0.82em}
 
-.modal{position:absolute;bottom:120px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:2px solid #555;border-radius:16px;padding:20px 24px;max-width:380px;width:90%;text-align:center;pointer-events:auto;display:none;z-index:30}
-.modal.show{display:block}
-.modal h3{font-size:1.05rem;color:#eee;margin-bottom:10px}
-.modal .pname{font-weight:bold;font-size:0.95rem;color:#fff;word-break:break-all}
-.modal .pdesc{font-size:0.8rem;color:#999;margin:6px 0;line-height:1.4}
-.modal .pstars{font-size:0.75rem;color:#777}
-.modal .plink{display:inline-block;margin-top:8px;padding:6px 14px;background:#333;color:#ddd;text-decoration:none;border-radius:8px;font-size:0.8rem;border:1px solid #555;transition:all 0.2s}
-.modal .plink:hover{background:#444;border-color:#888}
-.modal .collect-btn{display:block;margin:12px auto 0;padding:10px 24px;background:#1a1a1a;border:2px solid #888;color:#ddd;border-radius:10px;font-size:0.9rem;cursor:pointer;font-weight:bold;transition:all 0.2s}
-.modal .collect-btn:hover{background:#333;border-color:#fff;color:#fff}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:40;opacity:0;transition:all 0.5s}
+.toast.show{opacity:1}
+.toast .toast-card{background:rgba(15,15,20,0.95);border:1.5px solid rgba(255,255,255,0.15);border-radius:14px;padding:18px 26px;max-width:420px;text-align:center;backdrop-filter:blur(10px)}
+.toast .t-quote{font-size:0.95rem;color:#ddd;line-height:1.5;font-style:italic;margin-bottom:8px}
+.toast .t-author{font-size:0.75rem;color:#777}
+.toast .t-project{font-size:0.9rem;color:#fff;font-weight:bold;margin-bottom:4px}
+.toast .t-desc{font-size:0.78rem;color:#aaa;line-height:1.4;margin-bottom:4px}
+.toast .t-stars{font-size:0.7rem;color:#888}
+.toast .t-link{display:inline-block;margin-top:8px;padding:5px 12px;background:rgba(255,255,255,0.08);color:#ccc;text-decoration:none;border-radius:6px;font-size:0.75rem;border:1px solid rgba(255,255,255,0.15);pointer-events:auto}
+.toast .t-link:hover{background:rgba(255,255,255,0.15);color:#fff}
+.toast .t-planet{font-size:0.78rem;color:#aaa;margin-top:6px;line-height:1.3}
+.toast .t-sparkle{display:inline-block;margin-top:6px;font-size:1.2rem;animation:sparkle 0.6s ease-out}
+@keyframes sparkle{0%{transform:scale(0.5);opacity:0}50%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:0.8}}
 
 .hud{position:absolute;top:16px;left:20px;pointer-events:none;z-index:5}
-.hud .sysname{font-size:0.8rem;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-bottom:4px}
-.hud .lit-dots{display:flex;gap:5px}
-.hud .lit-dots .ld{width:7px;height:7px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);transition:all 0.5s}
-.hud .lit-dots .ld.on{background:#fff;border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,0.6)}
+.hud .sysname{font-size:0.78rem;color:rgba(255,255,255,0.45);letter-spacing:2px;margin-bottom:4px}
+.hud .lit-dots{display:flex;gap:4px}
+.hud .lit-dots .ld{width:6px;height:6px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);transition:all 0.5s}
+.hud .lit-dots .ld.on{background:#ffd700;border-color:#ffd700;box-shadow:0 0 8px rgba(255,215,0,0.5)}
 
-.touch-pad{position:fixed;bottom:24px;left:0;right:0;display:none;pointer-events:auto;z-index:15;padding:0 16px}
-@media(pointer:coarse){.touch-pad{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}}
-.touch-pad button{width:52px;height:52px;border-radius:14px;border:2px solid #555;background:rgba(30,30,30,0.9);color:#ddd;font-size:1.1rem;cursor:pointer;touch-action:manipulation}
-.touch-pad .big-btn{padding:0 20px;width:auto;font-weight:bold;font-size:0.85rem}
+.touch-pad{position:fixed;bottom:20px;left:0;right:0;display:none;pointer-events:auto;z-index:15;padding:0 14px}
+@media(pointer:coarse){.touch-pad{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap}}
+.touch-pad button{width:48px;height:48px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(20,20,25,0.85);color:#ccc;font-size:1rem;cursor:pointer;touch-action:manipulation}
+.touch-pad .big-btn{padding:0 18px;width:auto;font-weight:bold;font-size:0.8rem}
 </style>
 </head>
 <body>
@@ -51,17 +57,22 @@ canvas{display:block;position:fixed;top:0;left:0}
       <span class="emoji" id="sysEmoji">☀️</span>
       <h1 id="sysName">太阳系</h1>
       <p class="sub" id="sysDesc">我们的家园 · 8颗行星</p>
-      <p style="margin-top:12px"><kbd>SPACE</kbd> <span style="color:#888;font-size:0.8rem">发射火箭</span></p>
+      <div class="progress-row" id="progressDots"></div>
+      <p style="margin-top:8px"><kbd>SPACE</kbd> <span style="color:#888;font-size:0.78rem">发射火箭</span></p>
     </div>
   </div>
 
-  <div class="modal" id="modal">
-    <h3 id="modalTitle">🎯 对接成功！</h3>
-    <div class="pname" id="pName"></div>
-    <div class="pdesc" id="pDesc"></div>
-    <div class="pstars" id="pStars"></div>
-    <a class="plink" id="pLink" href="#" target="_blank">查看详情 →</a>
-    <button class="collect-btn" id="collectBtn">⭐ 点亮星辰</button>
+  <div class="toast" id="toast">
+    <div class="toast-card">
+      <div class="t-quote" id="tQuote"></div>
+      <div class="t-author" id="tAuthor"></div>
+      <div class="t-project" id="tProject"></div>
+      <div class="t-desc" id="tDesc"></div>
+      <div class="t-stars" id="tStars"></div>
+      <a class="t-link" id="tLink" href="#" target="_blank"></a>
+      <div class="t-planet" id="tPlanet"></div>
+      <div class="t-sparkle" id="tSparkle">✨</div>
+    </div>
   </div>
 
   <div class="hud">
@@ -70,59 +81,55 @@ canvas{display:block;position:fixed;top:0;left:0}
   </div>
 
   <div class="touch-pad" id="touchPad">
-    <button id="tbL">◀</button>
-    <button id="tbD">▼</button>
-    <button id="tbU">▲</button>
-    <button id="tbR">▶</button>
-    <button class="big-btn" id="tbLaunch" style="background:#333;border-color:#888">LAUNCH</button>
+    <button id="tbL">◀</button><button id="tbD">▼</button><button id="tbU">▲</button><button id="tbR">▶</button>
+    <button class="big-btn" id="tbLaunch" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3)">LAUNCH</button>
   </div>
 </div>
 
 <script>
 // ─────────────────────────────────
-//  STAR DOCK — 星际对接
-//  Black & white anime cute style
+//  STAR DOCK — 星际对接 v3
 // ─────────────────────────────────
 
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 let W, H, dpr;
 
-// ─── Planets Data (real relative orbital data) ───
+// ─── Solar Systems with rich planet data ───
 const SOLAR_SYSTEMS = [
   {
     name: '太阳系', emoji: '☀️', desc: '我们的家园 · 1颗恒星 · 8颗行星',
     planets: [
-      { name:'水星', emoji:'☿',   dist:0.39, period:0.24,  size:4,  color:'#999' },
-      { name:'金星', emoji:'♀',   dist:0.72, period:0.62,  size:7,  color:'#bbb' },
-      { name:'地球', emoji:'🌍',  dist:1.00, period:1.00,  size:7,  color:'#fff' },
-      { name:'火星', emoji:'♂',   dist:1.52, period:1.88,  size:5,  color:'#aaa' },
-      { name:'木星', emoji:'♃',   dist:2.50, period:4.50,  size:14, color:'#ddd' },
-      { name:'土星', emoji:'♄',   dist:3.20, period:7.00,  size:12, color:'#ccc' },
-      { name:'天王星',emoji:'⛢',  dist:4.00, period:12.0,  size:9,  color:'#bbb' },
-      { name:'海王星',emoji:'♆',  dist:4.50, period:16.0,  size:9,  color:'#aaa' },
+      { name:'水星', emoji:'☿', dist:0.39, period:0.24, size:4, temp:'hot', info:'太阳系最小的行星，表面温度可达430°C。没有大气层，昼夜温差极大。' },
+      { name:'金星', emoji:'♀', dist:0.72, period:0.62, size:7, temp:'hot', info:'最亮的行星，被浓厚二氧化碳大气包裹。表面温度约465°C，是太阳系最热的行星。' },
+      { name:'地球', emoji:'🌍', dist:1.00, period:1.00, size:7, temp:'warm', info:'我们的家园，目前已知唯一存在生命的天体。拥有液态水和含氧大气层。' },
+      { name:'火星', emoji:'♂', dist:1.52, period:1.88, size:5, temp:'warm', info:'红色星球，拥有太阳系最高的火山——奥林帕斯山。可能存在过液态水。' },
+      { name:'木星', emoji:'♃', dist:2.50, period:4.50, size:15, temp:'cool', info:'太阳系最大的行星，大红斑风暴已持续超过350年。拥有95颗已知卫星。' },
+      { name:'土星', emoji:'♄', dist:3.20, period:7.00, size:13, temp:'cool', info:'以其壮观的环系统闻名，主要由冰粒和岩石碎片组成。密度低于水。' },
+      { name:'天王星', emoji:'⛢', dist:4.00, period:12.0, size:9, temp:'cold', info:'侧躺旋转的冰巨星，自转轴倾斜约98°。大气含甲烷使其呈现蓝绿色。' },
+      { name:'海王星', emoji:'♆', dist:4.50, period:16.0, size:9, temp:'cold', info:'太阳系最远的行星，风速可达2100km/h。1846年通过数学预测发现。' },
     ]
   },
   {
-    name: '比邻星系', emoji: '⭐', desc: '最近的系外行星系统 · 距地球4.2光年',
+    name: '比邻星系', emoji: '⭐', desc: '距地球4.2光年 · 三星系统',
     planets: [
-      { name:'比邻b', emoji:'🪐', dist:0.30, period:0.30, size:5,  color:'#999' },
-      { name:'比邻c', emoji:'🪐', dist:0.60, period:0.70, size:6,  color:'#aaa' },
-      { name:'比邻d', emoji:'🪐', dist:0.90, period:1.20, size:5,  color:'#bbb' },
-      { name:'Prox e',emoji:'🪐', dist:1.40, period:2.00, size:7,  color:'#ccc' },
-      { name:'Prox f',emoji:'🪐', dist:2.00, period:3.50, size:10, color:'#ddd' },
+      { name:'比邻b', emoji:'🪐', dist:0.35, period:0.30, size:5, temp:'warm', info:'位于宜居带的类地行星，质量约1.2倍地球。可能存在液态水。' },
+      { name:'比邻c', emoji:'🪐', dist:0.65, period:0.70, size:6, temp:'cool', info:'超级地球，质量约7倍地球。轨道周期约5.2年。' },
+      { name:'比邻d', emoji:'🪐', dist:0.95, period:1.20, size:4, temp:'cool', info:'2022年确认的小质量行星，仅约0.26倍地球质量。' },
+      { name:'Prox e', emoji:'🪐', dist:1.50, period:2.20, size:8, temp:'cold', info:'理论预测的气态行星，拥有稀疏的环系统。' },
+      { name:'Prox f', emoji:'🪐', dist:2.20, period:4.00, size:11, temp:'cold', info:'冰巨星，大气富含氢和氦，可能有多个冰卫星。' },
     ]
   },
   {
     name: 'TRAPPIST-1', emoji: '💫', desc: '7颗类地行星 · 距地球40光年',
     planets: [
-      { name:'TRAPPIST-1b',emoji:'🪐',dist:0.25,period:0.25,size:5,color:'#999'},
-      { name:'TRAPPIST-1c',emoji:'🪐',dist:0.40,period:0.50,size:5,color:'#aaa'},
-      { name:'TRAPPIST-1d',emoji:'🪐',dist:0.55,period:0.75,size:5,color:'#bbb'},
-      { name:'TRAPPIST-1e',emoji:'🌍',dist:0.70,period:1.00,size:6,color:'#fff'},
-      { name:'TRAPPIST-1f',emoji:'🪐',dist:0.90,period:1.50,size:5,color:'#ccc'},
-      { name:'TRAPPIST-1g',emoji:'🪐',dist:1.10,period:2.00,size:6,color:'#ddd'},
-      { name:'TRAPPIST-1h',emoji:'🪐',dist:1.40,period:3.00,size:4,color:'#eee'},
+      { name:'TRAPPIST-1b', emoji:'🪐', dist:0.25, period:0.25, size:5, temp:'hot', info:'最内层的岩石行星，被潮汐锁定。表面温度极高。' },
+      { name:'TRAPPIST-1c', emoji:'🪐', dist:0.40, period:0.50, size:5, temp:'hot', info:'密度与地球相似，可能有稠密的二氧化碳大气。' },
+      { name:'TRAPPIST-1d', emoji:'🪐', dist:0.55, period:0.75, size:5, temp:'warm', info:'系统中质量最小的行星，约0.3倍地球质量。' },
+      { name:'TRAPPIST-1e', emoji:'🌍', dist:0.70, period:1.00, size:6, temp:'warm', info:'最像地球的行星！位于宜居带中央，最有可能存在液态水。' },
+      { name:'TRAPPIST-1f', emoji:'🪐', dist:0.90, period:1.50, size:6, temp:'cool', info:'宜居带边缘的水世界，表面可能被海洋覆盖。' },
+      { name:'TRAPPIST-1g', emoji:'🪐', dist:1.10, period:2.00, size:7, temp:'cool', info:'系统中最大的行星，可能有厚大气层。' },
+      { name:'TRAPPIST-1h', emoji:'🪐', dist:1.40, period:3.00, size:4, temp:'cold', info:'最外层的冰冻世界，表面温度极低。' },
     ]
   }
 ];
@@ -130,74 +137,86 @@ const SOLAR_SYSTEMS = [
 // ─── AI Quotes ───
 const AI_QUOTES = [
   { text:'"The development of full artificial intelligence could spell the end of the human race."', author:'Stephen Hawking' },
-  { text:'"AI is the new electricity."', author:'Andrew Ng' },
+  { text:'"AI is the new electricity. Just as electricity transformed industry after industry 100 years ago, AI will do the same."', author:'Andrew Ng' },
   { text:'"The question is not whether intelligent machines can have emotions, but whether machines can be intelligent without emotions."', author:'Marvin Minsky' },
   { text:'"By far, the greatest danger of Artificial Intelligence is that people conclude too early that they understand it."', author:'Eliezer Yudkowsky' },
   { text:'"Machine intelligence is the last invention that humanity will ever need to make."', author:'Nick Bostrom' },
-  { text:'"The pace of progress in artificial intelligence is incredibly fast. Unless you have direct exposure to groups like DeepMind, you have no idea how fast."', author:'Elon Musk' },
-  { text:'"Artificial intelligence will reach human levels by around 2029. Follow that out further to, say, 2045, we will have multiplied the intelligence, the human biological machine intelligence of our civilization a billion-fold."', author:'Ray Kurzweil' },
-  { text:'"AI doesn\'t have to be evil to destroy humanity — if AI has a goal and humanity just happens to be in the way, it will destroy humanity as a matter of course."', author:'Elon Musk' },
-  { text:'"Some people call this artificial intelligence, but the reality is this technology will enhance us. So instead of artificial intelligence, I think we\'ll augment our intelligence."', author:'Ginni Rometty' },
-  { text:'"The coming era of Artificial Intelligence will not be the era of war, but be the era of deep compassion, non-violence, and love."', author:'Amit Ray' },
+  { text:'"The pace of progress in artificial intelligence is incredibly fast. Unless you have direct exposure, you have no idea how fast."', author:'Elon Musk' },
+  { text:'"AI will reach human levels by around 2029. By 2045, we will have multiplied the intelligence of our civilization a billion-fold."', author:'Ray Kurzweil' },
+  { text:'"The best way to predict the future is to invent it — and AI is how we invent it now."', author:'Alan Kay (adapted)' },
+  { text:'"Some people call this artificial intelligence, but the reality is this technology will enhance us."', author:'Ginni Rometty' },
+  { text:'"AI doesn\'t have to be evil to destroy humanity — if AI has a goal and humanity happens to be in the way."', author:'Elon Musk' },
   { text:'"A year spent in artificial intelligence is enough to make one believe in God."', author:'Alan Perlis' },
   { text:'"I visualize a time when we will be to robots what dogs are to humans, and I\'m rooting for the machines."', author:'Claude Shannon' },
-  { text:'"The best way to predict the future is to invent it."', author:'Alan Kay' },
   { text:'"We are stuck with technology when what we really want is just stuff that works."', author:'Douglas Adams' },
-  { text:'"It is not the strongest of the species that survives, nor the most intelligent. It is the one most adaptable to change."', author:'Charles Darwin (applied to AI)' },
+  { text:'"It is through science that we prove, but through intuition that we discover."', author:'Henri Poincaré' },
+  { text:'"The important thing is not to stop questioning. Curiosity has its own reason for existing."', author:'Albert Einstein' },
 ];
 
+// ─── Planet color by temperature ───
+function planetColors(temp) {
+  switch (temp) {
+    case 'hot':  return { body:'#ff6644', glow:'#ff4422', name:'红热行星', bright:'#ff9977' };
+    case 'warm': return { body:'#ffaa33', glow:'#ff8800', name:'温暖行星', bright:'#ffcc66' };
+    case 'cool': return { body:'#66bbff', glow:'#3399dd', name:'凉爽行星', bright:'#99ddff' };
+    case 'cold': return { body:'#4488ff', glow:'#2266ee', name:'冰冷行星', bright:'#77aaff' };
+    default:     return { body:'#aaa', glow:'#888', name:'未知', bright:'#ccc' };
+  }
+}
+
 // ─── State ───
-const S = { START:'start', PLAY:'play', DOCK:'dock', COLLECTED:'collected', COMPLETE:'complete', WARP:'warp' };
+const S = { START:'start', PLAY:'play', DOCK:'dock', COMPLETE:'complete', WARP:'warp' };
 let state = S.START;
 let keys = {};
 let time = 0, lastTime = 0;
 let sysIdx = 0;
 let systemData;
-let planets = [];        // {angle, lit}
-let rocket = { x:0, y:0, speed:0, angle:0, lit:false, docking:false, tx:0, ty:0, ta:0 };
+let planets = [];
+let rocket = { x:0, y:0, px:0, py:0, speed:0, angle:0, docking:false, tx:0, ty:0, ta:0 };
 let targetPlanetIdx = 0;
 let particles = [];
 let bgStars = [];
 let collected = [];
 let projectCache = [];
-let pendingProject = null;
+let shownIds = new Set(); // global dedup
 let fetched = false;
 let warpP = 0;
 let hudAlpha = 3;
-let dockedSlots = [];    // {x, y, glow} — permanent lit positions
+let dockedSlots = [];
+let toastTimer = null;
 
 // ─── DOM ───
 const startScreen = document.getElementById('startScreen');
-const modal = document.getElementById('modal');
+const toast = document.getElementById('toast');
 const sysNameEl = document.getElementById('sysName');
 const sysEmojiEl = document.getElementById('sysEmoji');
 const sysDescEl = document.getElementById('sysDesc');
+const progressDotsEl = document.getElementById('progressDots');
 const hudNameEl = document.getElementById('hudName');
 const litDotsEl = document.getElementById('litDots');
-const touchPad = document.getElementById('touchPad');
 
 // ─── Resize ───
 function resize() {
-  dpr = Math.min(window.devicePixelRatio || 1, 2); // cap for perf
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
   W = window.innerWidth;
   H = window.innerHeight;
   canvas.width = W * dpr;
   canvas.height = H * dpr;
   canvas.style.width = W + 'px';
   canvas.style.height = H + 'px';
-  ctx.setTransform(1, 0, 0, 1, 0, 0); // reset
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.scale(dpr, dpr);
 }
 window.addEventListener('resize', resize);
 resize();
 
-// ─── Init background stars ───
-for (let i = 0; i < 300; i++) {
+// ─── Init stars ───
+for (let i = 0; i < 350; i++) {
   bgStars.push({
     x: Math.random(), y: Math.random(),
-    r: 0.3 + Math.random() * 1.8,
-    a: 0.2 + Math.random() * 0.7,
-    s: 0.5 + Math.random() * 2.5,
+    r: 0.2 + Math.random() * 2.2,
+    a: 0.15 + Math.random() * 0.7,
+    s: 0.5 + Math.random() * 3,
     o: Math.random() * Math.PI * 2
   });
 }
@@ -208,63 +227,53 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Space') {
     e.preventDefault();
     if (state === S.START) launch();
-    else if (state === S.COLLECTED) continueGame();
+    else if (state === S.DOCK) resetAfterDock();
     else if (state === S.COMPLETE) warp();
   }
   if (e.code === 'KeyR' && state === S.PLAY) respawn();
 });
 window.addEventListener('keyup', e => { keys[e.code] = false; });
 
-// Touch
-['tbU','ArrowUp','tbD','ArrowDown','tbL','ArrowLeft','tbR','ArrowRight'].reduce((a,v,i)=>{
-  if(i%2===0){a.push([document.getElementById(v)]);return a}
-  a[a.length-1].push(v);return a
-},[]).forEach(([el,code])=>{
-  if(!el) return;
-  el.addEventListener('touchstart',e=>{e.preventDefault();keys[code]=true});
-  el.addEventListener('touchend',e=>{e.preventDefault();keys[code]=false});
+// Touch controls
+['tbU','ArrowUp','tbD','ArrowDown','tbL','ArrowLeft','tbR','ArrowRight'].forEach((v,i,arr)=>{
+  if (i%2===0){
+    const el=document.getElementById(v);
+    if(el){
+      el.addEventListener('touchstart',e=>{e.preventDefault();keys[arr[i+1]]=true});
+      el.addEventListener('touchend',e=>{e.preventDefault();keys[arr[i+1]]=false});
+    }
+  }
 });
 document.getElementById('tbLaunch')?.addEventListener('touchstart', e => {
   e.preventDefault();
   if (state === S.START) launch();
-  else if (state === S.COLLECTED) continueGame();
+  else if (state === S.DOCK) resetAfterDock();
   else if (state === S.COMPLETE) warp();
 });
-document.getElementById('collectBtn').addEventListener('click', () => {
-  if (state === S.DOCK) collect();
-});
 
-// ─── System init ───
+// ─── System ───
 function loadSystem() {
   systemData = SOLAR_SYSTEMS[sysIdx % SOLAR_SYSTEMS.length];
   planets = systemData.planets.map((p, i) => ({
-    ...p,
-    angle: Math.random() * Math.PI * 2,
-    lit: false,
-    idx: i
+    ...p, angle: Math.random() * Math.PI * 2, lit: false, idx: i
   }));
-  targetPlanetIdx = 0;
+  targetPlanetIdx = findNextTarget();
   collected = [];
   dockedSlots = [];
   fetched = false;
   projectCache = [];
-  pendingProject = null;
   updateHUD();
+  updateStartScreen();
 
-  const p0 = planets[0];
-  sysNameEl.textContent = systemData.name;
-  sysEmojiEl.textContent = systemData.emoji;
-  sysDescEl.textContent = systemData.desc;
-  startScreen.classList.remove('hidden');
-  modal.classList.remove('show');
+  rocket = { x: W/2, y: H*0.88, px: W/2, py: H*0.88, speed: 0, angle: -Math.PI/2, docking: false, tx: 0, ty: 0, ta: 0 };
+  state = S.START;
+}
 
-  // Place rocket at bottom center
-  rocket = {
-    x: W / 2, y: H * 0.88,
-    speed: 0, angle: -Math.PI / 2,
-    lit: false, docking: false,
-    tx: 0, ty: 0, ta: 0
-  };
+function findNextTarget() {
+  const unlit = planets.map((p,i) => ({p,i})).filter(x => !x.p.lit);
+  if (unlit.length === 0) return 0;
+  // Pick random unlit planet
+  return unlit[Math.floor(Math.random() * unlit.length)].i;
 }
 
 function updateHUD() {
@@ -276,50 +285,47 @@ function updateHUD() {
   litDotsEl.innerHTML = html;
 }
 
-// ─── Get planet world position ───
+function updateStartScreen() {
+  sysNameEl.textContent = systemData.name;
+  sysEmojiEl.textContent = systemData.emoji;
+  sysDescEl.textContent = systemData.desc;
+  let dots = '';
+  for (let i = 0; i < planets.length; i++) {
+    dots += `<span class="pdot${collected.includes(i) ? ' done' : ''}"></span>`;
+  }
+  progressDotsEl.innerHTML = dots;
+  startScreen.classList.remove('hidden');
+  toast.classList.remove('show');
+}
+
+// ─── Planet position ───
 function getPlanetPos(idx) {
   const p = planets[idx];
   const cx = W / 2;
-  const cy = H * 0.42; // solar system center (upper half)
+  const cy = H * 0.42;
   const maxDist = Math.min(W, H) * 0.38;
-  const dist = p.dist / systemData.planets[systemData.planets.length - 1].dist * maxDist * 0.85;
+  const maxDataDist = systemData.planets[systemData.planets.length - 1].dist;
+  const dist = (p.dist / maxDataDist) * maxDist * 0.85;
   return {
     x: cx + Math.cos(p.angle) * dist,
     y: cy + Math.sin(p.angle) * dist,
-    dist,
-    cx, cy
+    dist, cx, cy
   };
 }
 
-// ─── Launch / Continue / Respawn ───
+// ─── Launch / Respawn ───
 function launch() {
   state = S.PLAY;
   startScreen.classList.add('hidden');
   rocket.speed = 80;
   rocket.angle = -Math.PI / 2;
   rocket.docking = false;
-  rocket.lit = false;
-  hudAlpha = 3;
-  if (!fetched) fetchProjects();
-}
-function continueGame() {
-  state = S.PLAY;
-  rocket.speed = 80;
-  rocket.angle = -Math.PI / 2;
-  rocket.docking = false;
   rocket.x = W / 2;
   rocket.y = H * 0.88;
-  pendingProject = null;
-  modal.classList.remove('show');
-  hudAlpha = 2;
-  // Next target
-  targetPlanetIdx = (targetPlanetIdx + 1) % planets.length;
-  // Skip already lit ones, find next unlit
-  let tries = 0;
-  while (collected.includes(targetPlanetIdx) && tries < planets.length) {
-    targetPlanetIdx = (targetPlanetIdx + 1) % planets.length;
-    tries++;
-  }
+  rocket.px = rocket.x;
+  rocket.py = rocket.y;
+  hudAlpha = 3;
+  if (!fetched) fetchProjects();
 }
 function respawn() {
   rocket.x = W / 2;
@@ -329,135 +335,170 @@ function respawn() {
   rocket.docking = false;
 }
 
+// ─── Reset after dock ───
+function resetAfterDock() {
+  toast.classList.remove('show');
+  if (collected.length >= planets.length) {
+    state = S.COMPLETE;
+    showComplete();
+    return;
+  }
+  // Auto-reset rocket
+  state = S.PLAY;
+  rocket.x = W / 2;
+  rocket.y = H * 0.88;
+  rocket.px = rocket.x;
+  rocket.py = rocket.y;
+  rocket.speed = 80;
+  rocket.angle = -Math.PI / 2;
+  rocket.docking = false;
+  targetPlanetIdx = findNextTarget();
+  hudAlpha = 2;
+}
+
 // ─── API ───
 async function fetchProjects() {
   fetched = true;
-  // Try multiple queries for variety
   const queries = [
     'topic:artificial-intelligence+topic:machine-learning+language:python',
     'topic:llm+topic:generative-ai',
-    'topic:deep-learning+topic:transformers'
+    'topic:deep-learning+topic:transformers',
+    'topic:ai-agent+topic:langchain',
   ];
   const q = queries[Math.floor(Math.random() * queries.length)];
   try {
-    const r = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=20`);
+    const r = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=25`);
     if (r.ok) {
       const d = await r.json();
       projectCache = (d.items || []).map(i => ({
-        id: 'gh-' + i.id, name: i.full_name,
-        desc: i.description || 'An amazing AI project',
-        url: i.html_url, stars: i.stargazers_count,
-        lang: i.language
+        id: 'gh-' + i.id,
+        name: i.full_name,
+        desc: i.description || 'An AI project',
+        url: i.html_url,
+        stars: i.stargazers_count
       }));
     }
   } catch (e) {}
-  if (projectCache.length < 8) projectCache = generateFallback();
+  if (projectCache.length < 10) projectCache = generateFallback();
 }
 function generateFallback() {
   const repos = [
     { name:'ollama/ollama', desc:'Run Llama, DeepSeek, and other LLMs locally', url:'https://github.com/ollama/ollama', stars:125000 },
-    { name:'langchain-ai/langchain', desc:'Build context-aware reasoning applications with LangChain', url:'https://github.com/langchain-ai/langchain', stars:105000 },
-    { name:'Significant-Gravitas/AutoGPT', desc:'Autonomous AI agents for task automation', url:'https://github.com/Significant-Gravitas/AutoGPT', stars:172000 },
-    { name:'huggingface/transformers', desc:'State-of-the-art ML for PyTorch, TensorFlow, and JAX', url:'https://github.com/huggingface/transformers', stars:140000 },
-    { name:'deepseek-ai/DeepSeek-V3', desc:'Strong, cost-effective MoE large language model', url:'https://github.com/deepseek-ai/DeepSeek-V3', stars:55000 },
-    { name:'meta-llama/llama-models', desc:"Meta's official Llama model releases", url:'https://github.com/meta-llama/llama-models', stars:35000 },
+    { name:'langchain-ai/langchain', desc:'Build context-aware reasoning applications', url:'https://github.com/langchain-ai/langchain', stars:105000 },
+    { name:'AutoGPT', desc:'Autonomous AI agents for task automation', url:'https://github.com/Significant-Gravitas/AutoGPT', stars:172000 },
+    { name:'huggingface/transformers', desc:'State-of-the-art ML for PyTorch, TF, JAX', url:'https://github.com/huggingface/transformers', stars:140000 },
+    { name:'deepseek-ai/DeepSeek-V3', desc:'Strong cost-effective MoE large language model', url:'https://github.com/deepseek-ai/DeepSeek-V3', stars:55000 },
     { name:'openai/whisper', desc:'Robust Speech Recognition via Large-Scale Weak Supervision', url:'https://github.com/openai/whisper', stars:75000 },
-    { name:'anthropics/claude-code', desc:'Agentic coding tool by Anthropic — Claude in your terminal', url:'https://github.com/anthropics/claude-code', stars:30000 },
-    { name:'AUTOMATIC1111/stable-diffusion-webui', desc:'Stable Diffusion web UI for image generation', url:'https://github.com/AUTOMATIC1111/stable-diffusion-webui', stars:150000 },
+    { name:'anthropics/claude-code', desc:'Agentic coding tool — Claude in your terminal', url:'https://github.com/anthropics/claude-code', stars:30000 },
+    { name:'AUTOMATIC1111/stable-diffusion-webui', desc:'Stable Diffusion web UI', url:'https://github.com/AUTOMATIC1111/stable-diffusion-webui', stars:150000 },
     { name:'langgenius/dify', desc:'Open-source LLM app development platform', url:'https://github.com/langgenius/dify', stars:60000 },
-    { name:'sgl-project/sglang', desc:'Fast serving framework for large language models', url:'https://github.com/sgl-project/sglang', stars:15000 },
-    { name:'vllm-project/vllm', desc:'High-throughput and memory-efficient LLM inference', url:'https://github.com/vllm-project/vllm', stars:45000 },
+    { name:'sgl-project/sglang', desc:'Fast serving framework for LLMs', url:'https://github.com/sgl-project/sglang', stars:15000 },
+    { name:'vllm-project/vllm', desc:'High-throughput LLM inference engine', url:'https://github.com/vllm-project/vllm', stars:45000 },
+    { name:'meta-llama/llama-models', desc:"Meta's official Llama model releases", url:'https://github.com/meta-llama/llama-models', stars:35000 },
+    { name:'crewAIInc/crewAI', desc:'Framework for orchestrating AI agent teams', url:'https://github.com/crewAIInc/crewAI', stars:25000 },
+    { name:'microsoft/autogen', desc:'Multi-agent conversation framework', url:'https://github.com/microsoft/autogen', stars:38000 },
+    { name:'gradio-app/gradio', desc:'Build & share ML web apps in Python', url:'https://github.com/gradio-app/gradio', stars:35000 },
+    { name:'comfyanonymous/ComfyUI', desc:'Powerful modular UI for Stable Diffusion', url:'https://github.com/comfyanonymous/ComfyUI', stars:65000 },
   ];
   return repos.map((r, i) => ({ id:'fb-'+i, ...r }));
 }
+
 function nextProject() {
-  // Mix: 60% real AI repos, 20% quotes, 20% news-style
+  // 60% real repo, 25% quote, 15% planet detail (but planet detail is shown separately)
   const roll = Math.random();
-  if (roll < 0.15 && projectCache.length >= collected.length + 1) {
-    // Return an AI quote as content
-    const q = AI_QUOTES[Math.floor(Math.random() * AI_QUOTES.length)];
-    return {
-      id: 'quote-' + Math.random(),
-      name: '💭 AI 哲思',
-      desc: q.text,
-      url: '#',
-      stars: 0,
-      isQuote: true,
-      author: q.author
-    };
+  if (roll < 0.3) {
+    const avail = AI_QUOTES.filter((_, i) => !shownIds.has('quote-' + i));
+    if (avail.length === 0) shownIds.clear(); // reset dedup if all shown
+    const q = avail.length > 0 ? avail[Math.floor(Math.random() * avail.length)] : AI_QUOTES[Math.floor(Math.random() * AI_QUOTES.length)];
+    const qi = AI_QUOTES.indexOf(q);
+    shownIds.add('quote-' + qi);
+    return { id:'q-'+qi, name:'', desc:q.text, url:'#', stars:0, isQuote:true, author:q.author };
   }
+
   if (projectCache.length === 0) {
     const q = AI_QUOTES[Math.floor(Math.random() * AI_QUOTES.length)];
-    return { id:'q', name:'AI Wisdom', desc:q.text, url:'#', stars:0, isQuote:true, author:q.author };
+    return { id:'q', name:'', desc:q.text, url:'#', stars:0, isQuote:true, author:q.author };
   }
-  const avail = projectCache.filter(p => !collected.includes(p.id));
-  if (avail.length === 0) return projectCache[Math.floor(Math.random() * projectCache.length)];
-  return avail[Math.floor(Math.random() * avail.length)];
+
+  const avail = projectCache.filter(p => !shownIds.has(p.id));
+  if (avail.length === 0) {
+    // All shown, reset dedup for this system
+    for (const p of projectCache) shownIds.delete(p.id);
+    return projectCache[Math.floor(Math.random() * projectCache.length)];
+  }
+  const picked = avail[Math.floor(Math.random() * avail.length)];
+  shownIds.add(picked.id);
+  return picked;
 }
 
-// ─── Dock / Collect ───
-function dock(project) {
-  state = S.DOCK;
-  pendingProject = project;
-  rocket.docking = true;
-  const pos = getPlanetPos(targetPlanetIdx);
-  rocket.tx = pos.x; rocket.ty = pos.y; rocket.ta = planets[targetPlanetIdx].angle;
-
-  // Show modal
-  document.getElementById('pName').textContent = project.name;
-  document.getElementById('pDesc').textContent = project.desc;
-  document.getElementById('pStars').textContent = project.isQuote
-    ? '— ' + (project.author || '')
-    : '⭐ ' + fmtStars(project.stars);
-  document.getElementById('pLink').href = project.url;
-  document.getElementById('pLink').textContent = project.isQuote ? '' : '查看项目 →';
-  document.getElementById('pLink').style.display = project.isQuote ? 'none' : 'inline-block';
-  document.getElementById('modalTitle').textContent = project.isQuote ? '💡 智慧之光' : '🎯 对接成功！';
-  modal.classList.add('show');
-
-  // Spark particles
-  for (let i = 0; i < 30; i++) {
-    const a = (i / 30) * Math.PI * 2;
-    particles.push({
-      x: rocket.x, y: rocket.y,
-      vx: Math.cos(a) * (30 + Math.random() * 50),
-      vy: Math.sin(a) * (30 + Math.random() * 50),
-      life: 1.2, ml: 1.2, size: 1.5 + Math.random() * 3, type: 'spark'
-    });
-  }
-}
-function collect() {
-  if (!pendingProject) return;
-  state = S.COLLECTED;
-  collected.push(targetPlanetIdx);
-  planets[targetPlanetIdx].lit = true;
-
-  // Record docked position for permanent glow
-  const pos = getPlanetPos(targetPlanetIdx);
-  dockedSlots.push({ x: pos.x, y: pos.y, glow: 1, planetIdx: targetPlanetIdx });
-
-  pendingProject = null;
-  modal.classList.remove('show');
-  updateHUD();
-
-  // Light-up particles
-  for (let i = 0; i < 25; i++) {
-    const a = (i / 25) * Math.PI * 2;
-    particles.push({
-      x: rocket.x, y: rocket.y,
-      vx: Math.cos(a) * 25, vy: Math.sin(a) * 25 - 8,
-      life: 1.8, ml: 1.8, size: 2 + Math.random() * 4, type: 'glow'
-    });
-  }
-
-  if (collected.length >= planets.length) {
-    setTimeout(() => { state = S.COMPLETE; showComplete(); }, 1800);
-  }
-}
 function fmtStars(n) {
   if (n >= 100000) return Math.floor(n / 1000) + 'k';
   if (n >= 10000) return (n / 1000).toFixed(1) + 'k';
   return String(n);
+}
+
+// ─── Dock = immediate light up ───
+function dock() {
+  const planet = planets[targetPlanetIdx];
+  const pos = getPlanetPos(targetPlanetIdx);
+  const colors = planetColors(planet.temp);
+
+  // Light up the planet
+  planet.lit = true;
+  collected.push(targetPlanetIdx);
+  dockedSlots.push({ x: pos.x, y: pos.y, glow: 1.5, color: colors.glow, planetIdx: targetPlanetIdx });
+
+  // Get content
+  const project = nextProject();
+  const toastEl = document.getElementById('toast');
+
+  // Build toast content based on type
+  if (project.isQuote) {
+    document.getElementById('tQuote').textContent = project.desc;
+    document.getElementById('tAuthor').textContent = '— ' + (project.author || '');
+    document.getElementById('tProject').textContent = '';
+    document.getElementById('tDesc').textContent = '';
+    document.getElementById('tStars').textContent = '';
+    document.getElementById('tLink').textContent = '';
+    document.getElementById('tLink').style.display = 'none';
+  } else {
+    document.getElementById('tQuote').textContent = '';
+    document.getElementById('tAuthor').textContent = '';
+    document.getElementById('tProject').textContent = project.name;
+    document.getElementById('tDesc').textContent = project.desc;
+    document.getElementById('tStars').textContent = '⭐ ' + fmtStars(project.stars);
+    document.getElementById('tLink').textContent = '查看项目 →';
+    document.getElementById('tLink').href = project.url;
+    document.getElementById('tLink').style.display = 'inline-block';
+  }
+
+  // Planet detail
+  document.getElementById('tPlanet').textContent = '🪐 ' + planet.name + ' · ' + colors.name + ' · ' + planet.info;
+
+  toastEl.classList.add('show');
+  state = S.DOCK;
+  rocket.docking = true;
+  rocket.tx = pos.x; rocket.ty = pos.y; rocket.ta = planet.angle;
+
+  updateHUD();
+
+  // Particles
+  for (let i = 0; i < 35; i++) {
+    const a = (i / 35) * Math.PI * 2;
+    particles.push({
+      x: rocket.x, y: rocket.y,
+      vx: Math.cos(a) * (25 + Math.random() * 60),
+      vy: Math.sin(a) * (25 + Math.random() * 60),
+      life: 1.5, ml: 1.5, size: 1.5 + Math.random() * 3.5, type: 'spark',
+      color: colors.glow
+    });
+  }
+
+  // Auto-hide toast after 4 seconds (or on SPACE)
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    if (state === S.DOCK) resetAfterDock();
+  }, 5000);
 }
 
 // ─── Complete / Warp ───
@@ -465,10 +506,9 @@ function showComplete() {
   sysEmojiEl.textContent = '🚀';
   sysNameEl.textContent = systemData.name + ' ✓';
   sysDescEl.textContent = '所有行星已点亮 · 自然选择号就绪';
-  const hint = sysIdx < SOLAR_SYSTEMS.length - 1
-    ? '下一个星系：' + SOLAR_SYSTEMS[(sysIdx + 1) % SOLAR_SYSTEMS.length].name
-    : '探索完成！循环至第一个星系';
-  startScreen.querySelector('p:last-child').innerHTML = `<kbd>SPACE</kbd> <span style="color:#888;font-size:0.8rem">${hint}</span>`;
+  const nextSys = SOLAR_SYSTEMS[(sysIdx + 1) % SOLAR_SYSTEMS.length];
+  document.querySelector('.start-card p:last-child').innerHTML = `<kbd>SPACE</kbd> <span style="color:#888;font-size:0.78rem">启程前往 ${nextSys.name}</span>`;
+  updateStartScreen();
   startScreen.classList.remove('hidden');
 }
 function warp() {
@@ -477,27 +517,55 @@ function warp() {
   startScreen.classList.add('hidden');
 }
 
+// ─── Collision Detection ───
+// Uses swept-circle test to prevent tunneling at high speeds
+function checkCollision(rx, ry, rpx, rpy, tpos, threshold) {
+  // Circle-circle static test first
+  const dist = Math.hypot(rx - tpos.x, ry - tpos.y);
+  if (dist <= threshold) return true;
+
+  // Swept test: check if the line segment from previous pos crosses near the target
+  const dx = rx - rpx;
+  const dy = ry - rpy;
+  const segLen = Math.hypot(dx, dy);
+  if (segLen < 0.1) return false; // stationary
+
+  // Find closest point on segment to target
+  const fx = tpos.x - rpx;
+  const fy = tpos.y - rpy;
+  let t = (fx * dx + fy * dy) / (segLen * segLen);
+  t = Math.max(0, Math.min(1, t));
+  const closestX = rpx + t * dx;
+  const closestY = rpy + t * dy;
+  const closestDist = Math.hypot(tpos.x - closestX, tpos.y - closestY);
+
+  return closestDist <= threshold * 1.1; // slightly more forgiving for swept
+}
+
 // ─── Update ───
 function update(dt) {
-  // Update planet angles
+  // Planet orbits
+  const baseSpeed = (2 * Math.PI) / 2.0;
   for (const p of planets) {
-    // Normalize period: Earth period = 2 seconds for gameplay
-    const baseSpeed = (2 * Math.PI) / (2.0); // one orbit per 2 seconds for Earth
     p.angle += baseSpeed * (1.0 / p.period) * dt;
   }
 
-  // Docked slot glow decay
+  // Docked slot glow decay (very slow — stays bright)
   for (const ds of dockedSlots) {
-    ds.glow = Math.max(0.4, ds.glow - dt * 0.1);
+    ds.glow = Math.max(0.8, ds.glow - dt * 0.05);
   }
 
   if (state === S.PLAY) {
+    // Save previous position for swept collision
+    rocket.px = rocket.x;
+    rocket.py = rocket.y;
+
     // Controls
     if (keys['ArrowUp']) rocket.speed = Math.min(rocket.speed + 180 * dt, 360);
     if (keys['ArrowDown']) rocket.speed = Math.max(rocket.speed - 200 * dt, 25);
     if (keys['ArrowLeft']) rocket.angle -= 3.2 * dt;
     if (keys['ArrowRight']) rocket.angle += 3.2 * dt;
-    rocket.angle = Math.max(-Math.PI * 0.9, Math.min(-Math.PI * 0.1, rocket.angle));
+    rocket.angle = Math.max(-Math.PI * 0.88, Math.min(-Math.PI * 0.12, rocket.angle));
 
     rocket.x += Math.cos(rocket.angle) * rocket.speed * dt;
     rocket.y += Math.sin(rocket.angle) * rocket.speed * dt;
@@ -511,17 +579,18 @@ function update(dt) {
     // Fire trail
     if (Math.random() < 0.55) {
       particles.push({
-        x: rocket.x, y: rocket.y + 20,
-        vx: Math.cos(rocket.angle + Math.PI + (Math.random() - 0.5) * 0.25) * (15 + Math.random() * 45),
-        vy: Math.sin(rocket.angle + Math.PI + (Math.random() - 0.5) * 0.25) * (15 + Math.random() * 45),
-        life: 0.35 + Math.random() * 0.3, ml: 0.65, size: 1 + Math.random() * 2.5, type: 'fire'
+        x: rocket.x, y: rocket.y + 18,
+        vx: Math.cos(rocket.angle + Math.PI + (Math.random() - 0.5) * 0.25) * (12 + Math.random() * 40),
+        vy: Math.sin(rocket.angle + Math.PI + (Math.random() - 0.5) * 0.25) * (12 + Math.random() * 40),
+        life: 0.3 + Math.random() * 0.25, ml: 0.55, size: 0.8 + Math.random() * 2, type: 'fire', color: '#aaa'
       });
     }
 
-    // Collision with target planet
+    // Collision with target planet (using swept test)
     const tpos = getPlanetPos(targetPlanetIdx);
-    const dist = Math.hypot(rocket.x - tpos.x, rocket.y - tpos.y);
-    if (dist < 32) dock(nextProject());
+    if (!planets[targetPlanetIdx].lit && checkCollision(rocket.x, rocket.y, rocket.px, rocket.py, tpos, 30)) {
+      dock();
+    }
   }
 
   if (state === S.DOCK && rocket.docking) {
@@ -530,7 +599,7 @@ function update(dt) {
     rocket.angle += (rocket.ta - rocket.angle) * 5 * dt;
   }
 
-  // Update particles
+  // Particles
   for (let i = particles.length - 1; i >= 0; i--) {
     const p = particles[i];
     p.life -= dt;
@@ -538,8 +607,6 @@ function update(dt) {
     p.x += p.vx * dt; p.y += p.vy * dt;
     p.vx *= 0.96; p.vy *= 0.96;
   }
-
-  // Limit particles
   if (particles.length > 400) particles.splice(0, particles.length - 400);
 
   // HUD fade
@@ -559,9 +626,7 @@ function update(dt) {
 // ─── Draw ───
 function draw() {
   ctx.clearRect(0, 0, W, H);
-
-  // Background
-  ctx.fillStyle = '#151515';
+  ctx.fillStyle = '#09090d';
   ctx.fillRect(0, 0, W, H);
 
   // Stars
@@ -569,39 +634,29 @@ function draw() {
     const sx = s.x * W, sy = s.y * H;
     const tw = 0.5 + 0.5 * Math.sin(time * s.s + s.o);
     const a = s.a * (0.5 + 0.5 * tw);
-
     ctx.fillStyle = `rgba(255,255,255,${a})`;
-    // Tiny cross for distant stars
-    if (s.r < 0.8) {
-      ctx.fillRect(sx, sy, dpr < 2 ? 1 : 0.6, dpr < 2 ? 1 : 0.6);
-    } else {
-      ctx.beginPath();
-      ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
+    if (s.r < 0.7) ctx.fillRect(sx, sy, dpr < 2 ? 1 : 0.6, dpr < 2 ? 1 : 0.6);
+    else { ctx.beginPath(); ctx.arc(sx, sy, s.r, 0, Math.PI * 2); ctx.fill(); }
   }
 
-  // Draw solar system
   drawSolarSystem();
 
-  // Docked glow positions (permanent)
+  // Docked glow spots (very bright)
   for (const ds of dockedSlots) {
-    const pulse = 0.5 + 0.5 * Math.sin(time * 3 + ds.planetIdx);
-    const alpha = ds.glow * (0.5 + 0.3 * pulse);
-    // Outer halo
-    const grad = ctx.createRadialGradient(ds.x, ds.y, 0, ds.x, ds.y, 22);
-    grad.addColorStop(0, `rgba(255,255,255,${alpha})`);
-    grad.addColorStop(0.5, `rgba(255,255,255,${alpha * 0.3})`);
+    const pulse = 0.5 + 0.5 * Math.sin(time * 3.5 + ds.planetIdx);
+    const alpha = ds.glow * (0.7 + 0.3 * pulse);
+    // Large halo
+    const grad = ctx.createRadialGradient(ds.x, ds.y, 0, ds.x, ds.y, 28);
+    grad.addColorStop(0, ds.color.replace(')', `,${alpha})`).replace('rgb', 'rgba'));
+    grad.addColorStop(0.4, ds.color.replace(')', `,${alpha * 0.5})`).replace('rgb', 'rgba'));
     grad.addColorStop(1, 'transparent');
     ctx.fillStyle = grad;
-    ctx.beginPath(); ctx.arc(ds.x, ds.y, 22, 0, Math.PI * 2); ctx.fill();
-
+    ctx.beginPath(); ctx.arc(ds.x, ds.y, 28, 0, Math.PI * 2); ctx.fill();
     // Bright center
-    ctx.fillStyle = `rgba(255,255,255,${alpha * 1.2})`;
-    ctx.beginPath(); ctx.arc(ds.x, ds.y, 4 + pulse * 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = `rgba(255,255,255,${alpha * 1.1})`;
+    ctx.beginPath(); ctx.arc(ds.x, ds.y, 5 + pulse * 3, 0, Math.PI * 2); ctx.fill();
   }
 
-  // Rocket (not during warp)
   if (state !== S.WARP) drawRocket();
 
   // Particles
@@ -610,34 +665,37 @@ function draw() {
     if (p.type === 'fire') {
       ctx.fillStyle = `rgba(180,180,180,${a})`;
     } else if (p.type === 'spark') {
-      ctx.fillStyle = `rgba(220,220,220,${a})`;
+      ctx.fillStyle = `rgba(255,255,255,${a})`;
+      ctx.shadowColor = p.color ? p.color.replace(')', `,${a*0.5})`).replace('rgb','rgba') : `rgba(255,255,255,${a*0.4})`;
+      ctx.shadowBlur = 5;
     } else {
-      ctx.fillStyle = `rgba(255,255,255,${a * 0.7})`;
-      ctx.shadowColor = `rgba(255,255,255,${a * 0.3})`;
-      ctx.shadowBlur = 6;
+      ctx.fillStyle = `rgba(255,255,255,${a*0.7})`;
     }
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size * a, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size * a, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
   }
-  ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
 
-  // HUD hints
+  // HUD
   if (state === S.PLAY && hudAlpha > 0) {
-    ctx.fillStyle = `rgba(180,180,180,${Math.min(hudAlpha * 0.4, 0.5)})`;
-    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillStyle = `rgba(180,180,180,${Math.min(hudAlpha*0.35,0.45)})`;
+    ctx.font = '11px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('↑↓ speed  ←→ steer  R reset', W / 2, H - 20);
+    ctx.fillText('↑↓ speed  ←→ steer  R reset', W/2, H-18);
   }
   if (state === S.START) {
-    const pulse = 0.5 + 0.5 * Math.sin(time * 2);
-    ctx.fillStyle = `rgba(200,200,200,${0.25 + pulse * 0.25})`;
-    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+    const pulse = 0.5+0.5*Math.sin(time*2);
+    ctx.fillStyle = `rgba(200,200,200,${0.2+pulse*0.2})`;
+    ctx.font = '11px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('按 SPACE 发射', W / 2, H - 20);
+    ctx.fillText('按 SPACE 发射', W/2, H-18);
+  }
+  if (state === S.DOCK) {
+    ctx.fillStyle = 'rgba(200,200,200,0.4)';
+    ctx.font = '11px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('按 SPACE 继续', W/2, H-18);
   }
 
-  // Warp
   if (state === S.WARP) drawWarp();
 }
 
@@ -647,73 +705,74 @@ function drawSolarSystem() {
   const maxDist = Math.min(W, H) * 0.38;
   const maxDataDist = systemData.planets[systemData.planets.length - 1].dist;
 
-  // Sun
-  const sunGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 26);
+  // Sun glow
+  const sunGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 32);
   sunGrad.addColorStop(0, '#fff');
-  sunGrad.addColorStop(0.3, '#eee');
-  sunGrad.addColorStop(0.7, '#555');
+  sunGrad.addColorStop(0.2, '#ffeedd');
+  sunGrad.addColorStop(0.5, '#886644');
   sunGrad.addColorStop(1, 'transparent');
   ctx.fillStyle = sunGrad;
-  ctx.beginPath(); ctx.arc(cx, cy, 26, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, 32, 0, Math.PI*2); ctx.fill();
 
   // Sun core
   ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI*2); ctx.fill();
 
-  // Orbit lines and planets
+  // Orbits + planets
   for (let i = 0; i < planets.length; i++) {
     const p = planets[i];
     const orbitR = (p.dist / maxDataDist) * maxDist * 0.85;
 
-    // Orbit ring
-    ctx.strokeStyle = p.lit ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.06)';
-    ctx.lineWidth = p.lit ? 1.5 : 0.8;
-    ctx.setLineDash(p.lit ? [] : [3, 8]);
-    ctx.beginPath(); ctx.arc(cx, cy, orbitR, 0, Math.PI * 2); ctx.stroke();
+    // Orbit line
+    ctx.strokeStyle = p.lit ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = p.lit ? 1.2 : 0.6;
+    ctx.setLineDash(p.lit ? [] : [2, 10]);
+    ctx.beginPath(); ctx.arc(cx, cy, orbitR, 0, Math.PI*2); ctx.stroke();
     ctx.setLineDash([]);
 
-    // Planet position
     const px = cx + Math.cos(p.angle) * orbitR;
     const py = cy + Math.sin(p.angle) * orbitR;
+    const colors = planetColors(p.temp);
 
-    // Planet body
+    // Lit planet glow
     if (p.lit) {
-      // Lit: bright with glow
-      const pGrad = ctx.createRadialGradient(px, py, 0, px, py, p.size * 2.5);
-      pGrad.addColorStop(0, '#fff');
-      pGrad.addColorStop(0.4, '#ddd');
+      const glowSize = p.size * 3;
+      const pGrad = ctx.createRadialGradient(px, py, 0, px, py, glowSize);
+      const glowColor = colors.glow;
+      pGrad.addColorStop(0, glowColor);
+      pGrad.addColorStop(0.4, glowColor.replace(')', ',0.6)').replace('rgb', 'rgba'));
       pGrad.addColorStop(1, 'transparent');
       ctx.fillStyle = pGrad;
-      ctx.beginPath(); ctx.arc(px, py, p.size * 2.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(px, py, glowSize, 0, Math.PI*2); ctx.fill();
     }
 
-    // Planet solid
-    ctx.fillStyle = p.lit ? '#fff' : p.color;
-    ctx.strokeStyle = p.lit ? '#fff' : 'rgba(255,255,255,0.4)';
-    ctx.lineWidth = p.lit ? 2 : 1;
-    ctx.beginPath(); ctx.arc(px, py, p.size, 0, Math.PI * 2); ctx.fill();
+    // Planet body
+    ctx.fillStyle = p.lit ? colors.bright : colors.body;
+    ctx.strokeStyle = p.lit ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = p.lit ? 1.8 : 0.8;
+    ctx.beginPath(); ctx.arc(px, py, p.size, 0, Math.PI*2); ctx.fill();
     ctx.stroke();
 
-    // Target indicator on current target
+    // Target indicator
     if (i === targetPlanetIdx && state === S.PLAY && !p.lit) {
-      const pulse = 0.6 + 0.4 * Math.sin(time * 4);
+      const pulse = 0.6 + 0.4 * Math.sin(time * 4.5);
+      // Animated ring
       ctx.strokeStyle = `rgba(255,255,255,${pulse})`;
       ctx.lineWidth = 2.5;
-      ctx.beginPath(); ctx.arc(px, py, p.size + 10, 0, Math.PI * 2); ctx.stroke();
-
-      // Small arrows around target
+      ctx.beginPath(); ctx.arc(px, py, p.size + 12, 0, Math.PI*2); ctx.stroke();
+      // Rotating dots
       for (let a = 0; a < 4; a++) {
-        const aa = time * 2 + a * Math.PI / 2;
-        const ax = px + Math.cos(aa) * (p.size + 16);
-        const ay = py + Math.sin(aa) * (p.size + 16);
+        const aa = time * 2.5 + a * Math.PI/2;
+        const ax = px + Math.cos(aa) * (p.size + 18);
+        const ay = py + Math.sin(aa) * (p.size + 18);
         ctx.fillStyle = `rgba(255,255,255,${pulse})`;
-        ctx.beginPath(); ctx.arc(ax, ay, 2.5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(ax, ay, 2.5, 0, Math.PI*2); ctx.fill();
       }
     }
 
-    // Planet name label
-    if (p.lit || i === targetPlanetIdx) {
-      ctx.fillStyle = p.lit ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)';
+    // Name label
+    if (p.lit || (i === targetPlanetIdx && state === S.PLAY)) {
+      ctx.fillStyle = p.lit ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.45)';
       ctx.font = `${p.lit ? 11 : 10}px "PingFang SC","Microsoft YaHei",sans-serif`;
       ctx.textAlign = 'center';
       ctx.fillText(p.emoji + ' ' + p.name, px, py - p.size - 10);
@@ -723,101 +782,79 @@ function drawSolarSystem() {
 
 function drawRocket() {
   ctx.save();
-  const sway = state === S.START ? Math.sin(performance.now() / 1000 * 1.5) * 4 : 0;
+  const sway = state === S.START ? Math.sin(performance.now()/1000*1.5)*4 : 0;
   ctx.translate(rocket.x, rocket.y + sway);
-  ctx.rotate(rocket.angle + Math.PI / 2);
+  ctx.rotate(rocket.angle + Math.PI/2);
 
   const w = 24, h = 42, r = 12;
 
-  if (rocket.lit) {
-    ctx.shadowColor = 'rgba(255,255,255,0.5)';
-    ctx.shadowBlur = 14;
+  if (state === S.DOCK) {
+    ctx.shadowColor = 'rgba(255,255,200,0.6)';
+    ctx.shadowBlur = 16;
   }
 
-  // Main body
-  ctx.fillStyle = '#1e1e1e';
+  // Body
+  ctx.fillStyle = '#18181c';
   ctx.strokeStyle = '#ddd';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(0, -h / 2 + r, r, Math.PI, 0, false);
-  ctx.lineTo(w / 2, h / 2 - r);
-  ctx.arc(0, h / 2 - r, r, 0, Math.PI, false);
-  ctx.lineTo(-w / 2, -h / 2 + r);
+  ctx.arc(0, -h/2+r, r, Math.PI, 0, false);
+  ctx.lineTo(w/2, h/2-r);
+  ctx.arc(0, h/2-r, r, 0, Math.PI, false);
+  ctx.lineTo(-w/2, -h/2+r);
   ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
+  ctx.fill(); ctx.stroke();
 
   // Nose
-  ctx.fillStyle = '#333';
+  ctx.fillStyle = '#2a2a30';
   ctx.strokeStyle = '#ddd';
   ctx.beginPath();
-  ctx.arc(0, -h / 2 + r, r * 0.55, Math.PI, 0, false);
-  ctx.fill();
-  ctx.stroke();
+  ctx.arc(0, -h/2+r, r*0.55, Math.PI, 0, false);
+  ctx.fill(); ctx.stroke();
 
   // Stripe
-  ctx.fillStyle = '#555';
-  ctx.fillRect(-w / 2, -2, w, 4);
+  ctx.fillStyle = '#444';
+  ctx.fillRect(-w/2, -1.5, w, 3);
 
   // Window
-  ctx.fillStyle = '#1e1e1e';
+  ctx.fillStyle = '#18181c';
   ctx.strokeStyle = '#ddd';
   ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.arc(0, -11, 7, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, -10, 7, 0, Math.PI*2); ctx.fill(); ctx.stroke();
   ctx.fillStyle = '#fff';
-  ctx.beginPath();
-  ctx.arc(-1.5, -13, 2, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.beginPath(); ctx.arc(-1.5, -12, 2, 0, Math.PI*2); ctx.fill();
 
   // Fins
-  ctx.fillStyle = '#333';
+  ctx.fillStyle = '#2a2a30';
   ctx.strokeStyle = '#ddd';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(-w / 2 + 2, h / 2 - 14);
-  ctx.lineTo(-w / 2 - 8, h / 2 + 5);
-  ctx.lineTo(-w / 2 + 6, h / 2 - 4);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
+  ctx.moveTo(-w/2+2, h/2-14); ctx.lineTo(-w/2-8, h/2+5); ctx.lineTo(-w/2+6, h/2-4); ctx.closePath();
+  ctx.fill(); ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(w / 2 - 2, h / 2 - 14);
-  ctx.lineTo(w / 2 + 8, h / 2 + 5);
-  ctx.lineTo(w / 2 - 6, h / 2 - 4);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
+  ctx.moveTo(w/2-2, h/2-14); ctx.lineTo(w/2+8, h/2+5); ctx.lineTo(w/2-6, h/2-4); ctx.closePath();
+  ctx.fill(); ctx.stroke();
 
   // Engine
   ctx.fillStyle = '#111';
-  ctx.strokeStyle = '#888';
+  ctx.strokeStyle = '#777';
   ctx.beginPath();
-  ctx.moveTo(-3, h / 2 - r + 2);
-  ctx.lineTo(-5, h / 2 + 2);
-  ctx.lineTo(5, h / 2 + 2);
-  ctx.lineTo(3, h / 2 - r + 2);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
+  ctx.moveTo(-3, h/2-r+2); ctx.lineTo(-5, h/2+2); ctx.lineTo(5, h/2+2); ctx.lineTo(3, h/2-r+2); ctx.closePath();
+  ctx.fill(); ctx.stroke();
 
   // Face
   ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.arc(-3.5, -4, 2.2, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(3.5, -4, 2.2, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(-3.5, -3, 2.2, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(3.5, -3, 2.2, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#111';
-  ctx.beginPath(); ctx.arc(-3.5, -4, 1.1, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(3.5, -4, 1.1, 0, Math.PI * 2); ctx.fill();
-  // Mouth
+  ctx.beginPath(); ctx.arc(-3.5, -3, 1.1, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(3.5, -3, 1.1, 0, Math.PI*2); ctx.fill();
   ctx.strokeStyle = '#ddd';
   ctx.lineWidth = 1.2;
-  ctx.beginPath(); ctx.arc(0, -1, 2.2, 0.2, Math.PI - 0.2); ctx.stroke();
-  // Blush
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
-  ctx.beginPath(); ctx.ellipse(-7, 0, 2.5, 1.8, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(7, 0, 2.5, 1.8, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(0, 0, 2.2, 0.2, Math.PI-0.2); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
+  ctx.beginPath(); ctx.ellipse(-7, 0, 2.5, 1.8, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(7, 0, 2.5, 1.8, 0, 0, Math.PI*2); ctx.fill();
 
   ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
   ctx.restore();
@@ -825,55 +862,48 @@ function drawRocket() {
 
 function drawWarp() {
   const p = warpP;
-  ctx.fillStyle = `rgba(20,20,20,${p < 0.4 ? p / 0.4 * 0.85 : 0.85})`;
+  ctx.fillStyle = `rgba(9,9,13,${p<0.4?p/0.4*0.9:0.9})`;
   ctx.fillRect(0, 0, W, H);
 
   if (p < 0.4) {
-    const stretch = p / 0.4 * Math.max(W, H);
+    const stretch = p/0.4 * Math.max(W, H);
     for (let i = 0; i < 120; i++) {
-      const x = Math.random() * W, y = Math.random() * H;
-      ctx.strokeStyle = `rgba(200,200,200,${0.2 + Math.random() * 0.5})`;
-      ctx.lineWidth = 0.3 + Math.random() * 1.2;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + (Math.random() - 0.5) * stretch, y - stretch * 0.7);
-      ctx.stroke();
+      const x = Math.random()*W, y = Math.random()*H;
+      ctx.strokeStyle = `rgba(200,200,200,${0.15+Math.random()*0.4})`;
+      ctx.lineWidth = 0.3+Math.random()*1;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x+(Math.random()-0.5)*stretch, y-stretch*0.7); ctx.stroke();
     }
   } else if (p < 0.65) {
-    const sp = (p - 0.4) / 0.25;
-    const sx = W / 2, sy = H / 2 + Math.sin(sp * Math.PI) * 30;
-    ctx.save(); ctx.translate(sx, sy);
-    ctx.scale(1 + sp * 0.15, 1 + sp * 0.15);
-    ctx.fillStyle = '#1a1a1a';
-    ctx.strokeStyle = '#ddd';
-    ctx.lineWidth = 2;
+    const sp = (p-0.4)/0.25;
+    const sx = W/2, sy = H/2+Math.sin(sp*Math.PI)*30;
+    ctx.save(); ctx.translate(sx, sy); ctx.scale(1+sp*0.15, 1+sp*0.15);
+    ctx.fillStyle = '#15151a'; ctx.strokeStyle = '#ddd'; ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(0, -45); ctx.lineTo(30, 20); ctx.lineTo(10, 14);
-    ctx.lineTo(6, 30); ctx.lineTo(-6, 30); ctx.lineTo(-10, 14);
-    ctx.lineTo(-30, 20); ctx.closePath();
+    ctx.moveTo(0,-45); ctx.lineTo(30,20); ctx.lineTo(10,14);
+    ctx.lineTo(6,30); ctx.lineTo(-6,30); ctx.lineTo(-10,14); ctx.lineTo(-30,20); ctx.closePath();
     ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#1a1a1a';
-    ctx.beginPath(); ctx.ellipse(0, -8, 6, 11, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#15151a';
+    ctx.beginPath(); ctx.ellipse(0,-8,6,11,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
     ctx.restore();
     ctx.fillStyle = '#ddd';
     ctx.font = 'bold 13px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('自然选择号', sx, sy - 72);
+    ctx.fillText('自然选择号', sx, sy-72);
   } else {
-    const ns = SOLAR_SYSTEMS[(sysIdx + 1) % SOLAR_SYSTEMS.length];
+    const ns = SOLAR_SYSTEMS[(sysIdx+1)%SOLAR_SYSTEMS.length];
     ctx.fillStyle = '#ddd';
     ctx.font = 'bold 16px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(ns.emoji + ' ' + ns.name, W / 2, H / 2 - 16);
+    ctx.fillText(ns.emoji+' '+ns.name, W/2, H/2-16);
     ctx.fillStyle = '#999';
     ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.fillText(ns.desc, W / 2, H / 2 + 16);
+    ctx.fillText(ns.desc, W/2, H/2+16);
   }
 }
 
-// ─── Game Loop ───
+// ─── Loop ───
 function loop(ts) {
-  const dt = lastTime ? Math.min((ts - lastTime) / 1000, 0.05) : 0.016;
+  const dt = lastTime ? Math.min((ts - lastTime)/1000, 0.05) : 0.016;
   lastTime = ts; time += dt;
   update(dt);
   draw();
