@@ -602,6 +602,8 @@ function resumeAfterDock() {
     powerups = {}; // clear unconsumed
   }
   state = S.PLAY;
+  rocket.x = W / 2;
+  rocket.y = H * 0.88;
   rocket.angle = -Math.PI / 2;
   rocket.docking = false;
   rocket.px = rocket.x;
